@@ -46,19 +46,23 @@ set(SOURCE_FILES_COMPFINANCE_AAD_EXPR
     CompFinance/gaussians.h
     Tutorials/basicInstrumentationExpr.cpp
 )
-# Define source files for CRTP
+
 set(SOURCE_FILES_CRTP
     Tutorials/curiouslyRecursiveTemplatePattern.cpp
 )
 
-# Deducing "this in C++23""
 set(SOURCE_FILES_DEDUCING_THIS
     Tutorials/incrementable.cpp
+)
+
+set(SOURCE_FILES_MONTE_CARLO
+    Tutorials/monteCarloSimulation.cpp
 )
 
 add_executable(toyCodeChp9sections2to4 Tutorials/toyCodeChp9sections2to4.cpp)
 add_executable(toyCodeChp9section5 Tutorials/toyCodeChp9section5.cpp)
 add_executable(toyCodeChp15section2 Tutorials/toyCodeChp15section2.cpp)
+add_executable(monteCarloSimulation ${SOURCE_FILES_MONTE_CARLO})
 
 add_executable(basicInstrumentation ${SOURCE_FILES_COMPFINANCE_AAD})
 target_compile_definitions(basicInstrumentation PRIVATE AADET=0)
@@ -66,5 +70,6 @@ target_compile_definitions(basicInstrumentation PRIVATE AADET=0)
 add_executable(basicInstrumentationExpr ${SOURCE_FILES_COMPFINANCE_AAD_EXPR})
 target_compile_definitions(basicInstrumentationExpr PRIVATE AADET=1)
 
-add_executable(curiouslyRecursiveTemplatePattern ${SOURCE_FILES_CRTP})
-#add_executable(incrementable ${SOURCE_FILES_DEDUCING_THIS})
+add_executable(tangent_book01 Tutorials/tangent_book01.cpp)
+add_executable(adjoint_book01 Tutorials/adjoint_book01.cpp)
+add_executable(black_scholes_tangent Tutorials/black_scholes_tangent.cpp)
