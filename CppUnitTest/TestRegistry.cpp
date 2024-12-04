@@ -24,10 +24,10 @@ void TestRegistry::add (Test *test) {
     ///Users/aderdouri/Downloads/DeepL/Test/FCLayerTest.cpp
     ///Users/aderdouri/Downloads/DeepL/src/SoftmaxLayerTest.cpp
     //Test/matrixFunctionsTest.cpp
-    if (
-        //test->getFileName().ends_with("Test/QuadraticOracleTest.cpp") ||
-        test->getFileName().ends_with("DeepL/Test/SoftmaxLayerTest.cpp")
-    )
+    // if (
+    //     //test->getFileName().ends_with("Test/QuadraticOracleTest.cpp") ||
+    //     test->getFileName().ends_with("DeepL/Test/SoftmaxLayerTest.cpp")
+    // )
     {
         tests.push_back (test);
     }

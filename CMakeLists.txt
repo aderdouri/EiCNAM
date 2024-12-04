@@ -32,7 +32,6 @@ set(SOURCE_FILES_COMPFINANCE_AAD
     CompFinance/AADNumber.h
     CompFinance/AADTape.h
     CompFinance/blocklist.h
-    Tutorials/src/basicInstrumentation.cpp
 )
 
 # Define source files for AADExpr (advanced Instrumentation)
@@ -44,9 +43,9 @@ set(SOURCE_FILES_COMPFINANCE_AAD_EXPR
     CompFinance/AADTape.h
     CompFinance/blocklist.h
     CompFinance/gaussians.h
-    Tutorials/src/basicInstrumentationExpr.cpp
 )
 
+# Examples
 set(SOURCE_FILES_CRTP
     Tutorials/src/curiouslyRecursiveTemplatePattern.cpp
 )
@@ -64,8 +63,9 @@ set(SOURCE_FILES_AD_STARTER
     Tutorials/src/Utils.cpp
     Tutorials/src/AdStarter.h
     Tutorials/src/AdStarter.cpp
+    Tutorials/tests/AdStarterTest.cpp
 )
-add_executable(AdStarter ${SOURCE_FILES_AD_STARTER})
+add_executable(AdStarter ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_AD_STARTER})
 
 
 set(SOURCE_FILES_BLACK_FORMULA
@@ -103,9 +103,17 @@ add_executable(toyCodeChp9section5 Tutorials/src/toyCodeChp9section5.cpp)
 add_executable(toyCodeChp15section2 Tutorials/src/toyCodeChp15section2.cpp)
 add_executable(monteCarloSimulation ${SOURCE_FILES_MONTE_CARLO})
 
-add_executable(basicInstrumentation ${SOURCE_FILES_COMPFINANCE_AAD})
-target_compile_definitions(basicInstrumentation PRIVATE AADET=0)
 
-add_executable(basicInstrumentationExpr ${SOURCE_FILES_COMPFINANCE_AAD_EXPR})
-target_compile_definitions(basicInstrumentationExpr PRIVATE AADET=1)
+set(SOURCE_FILES_BASIC_INSTRUMENTATION 
+    Tutorials/tests/BasicInstrumentationTest.cpp
+)
 
+set(SOURCE_FILES_BASIC_INSTRUMENTATION_EXPR 
+    Tutorials/tests/BasicInstrumentationExprTest.cpp
+)
+
+add_executable (autoDiff ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_COMPFINANCE_AAD} ${SOURCE_FILES_BASIC_INSTRUMENTATION})
+target_compile_definitions(autoDiff PRIVATE AADET=0)
+
+add_executable (autoDiffExpr ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_COMPFINANCE_AAD} ${SOURCE_FILES_BASIC_INSTRUMENTATION_EXPR})
+target_compile_definitions(autoDiffExpr PRIVATE AADET=1)
