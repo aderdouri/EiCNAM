@@ -217,7 +217,6 @@ TEST(BasicInstrumentation, SabrVolatilityFormulaTest)
 
 TEST(BasicInstrumentation, SabrPriceFormulaTest)
 {
-    return;
     std::println("==========================");
     std::println("SabrPriceFormulaTest");
     std::println("==========================");
