@@ -32,7 +32,7 @@ set(SOURCE_FILES_COMPFINANCE_AAD
     CompFinance/AADNumber.h
     CompFinance/AADTape.h
     CompFinance/blocklist.h
-    Tutorials/basicInstrumentation.cpp
+    Tutorials/src/basicInstrumentation.cpp
 )
 
 # Define source files for AADExpr (advanced Instrumentation)
@@ -44,24 +44,63 @@ set(SOURCE_FILES_COMPFINANCE_AAD_EXPR
     CompFinance/AADTape.h
     CompFinance/blocklist.h
     CompFinance/gaussians.h
-    Tutorials/basicInstrumentationExpr.cpp
+    Tutorials/src/basicInstrumentationExpr.cpp
 )
 
 set(SOURCE_FILES_CRTP
-    Tutorials/curiouslyRecursiveTemplatePattern.cpp
+    Tutorials/src/curiouslyRecursiveTemplatePattern.cpp
 )
 
 set(SOURCE_FILES_DEDUCING_THIS
-    Tutorials/incrementable.cpp
+    Tutorials/src/incrementable.cpp
 )
 
 set(SOURCE_FILES_MONTE_CARLO
-    Tutorials/monteCarloSimulation.cpp
+    Tutorials/src/monteCarloSimulation.cpp
 )
 
-add_executable(toyCodeChp9sections2to4 Tutorials/toyCodeChp9sections2to4.cpp)
-add_executable(toyCodeChp9section5 Tutorials/toyCodeChp9section5.cpp)
-add_executable(toyCodeChp15section2 Tutorials/toyCodeChp15section2.cpp)
+set(SOURCE_FILES_AD_STARTER
+    Tutorials/src/Utils.h
+    Tutorials/src/Utils.cpp
+    Tutorials/src/AdStarter.h
+    Tutorials/src/AdStarter.cpp
+)
+add_executable(AdStarter ${SOURCE_FILES_AD_STARTER})
+
+
+set(SOURCE_FILES_BLACK_FORMULA
+    Tutorials/src/Utils.h
+    Tutorials/src/Utils.cpp
+    Tutorials/src/BlackFormula.h
+    Tutorials/src/BlackFormula.cpp
+    Tutorials/src/BlackFormulaTest.cpp    
+)
+add_executable(BlackFormula ${SOURCE_FILES_BLACK_FORMULA})
+
+set(SOURCE_FILES_SABR_VOLATILITY_FORMULA
+    Tutorials/src/Utils.h
+    Tutorials/src/Utils.cpp
+    Tutorials/src/SabrVolatilityFormula.h
+    Tutorials/src/SabrVolatilityFormula.cpp
+    Tutorials/src/SabrVolatilityFormulaTest.cpp
+)
+add_executable(SabrVolatilityFormula ${SOURCE_FILES_SABR_VOLATILITY_FORMULA})
+
+set(SOURCE_FILES_SABR_PRICE_FORMULA
+    Tutorials/src/Utils.h
+    Tutorials/src/Utils.cpp
+    Tutorials/src/BlackFormula.h
+    Tutorials/src/BlackFormula.cpp
+    Tutorials/src/SabrVolatilityFormula.h
+    Tutorials/src/SabrVolatilityFormula.cpp
+    Tutorials/src/SabrPriceFormula.cpp
+)
+add_executable(SabrPriceFormula ${SOURCE_FILES_SABR_PRICE_FORMULA})
+
+
+add_executable(toyCodeChp9sections2to4 Tutorials/src/toyCodeChp9sections2to4.cpp)
+add_executable(toyCodeChp9section5 Tutorials/src/toyCodeChp9section5.cpp)
+add_executable(toyCodeChp15section2 Tutorials/src/toyCodeChp15section2.cpp)
 add_executable(monteCarloSimulation ${SOURCE_FILES_MONTE_CARLO})
 
 add_executable(basicInstrumentation ${SOURCE_FILES_COMPFINANCE_AAD})
@@ -70,6 +109,3 @@ target_compile_definitions(basicInstrumentation PRIVATE AADET=0)
 add_executable(basicInstrumentationExpr ${SOURCE_FILES_COMPFINANCE_AAD_EXPR})
 target_compile_definitions(basicInstrumentationExpr PRIVATE AADET=1)
 
-add_executable(tangent_book01 Tutorials/tangent_book01.cpp)
-add_executable(adjoint_book01 Tutorials/adjoint_book01.cpp)
-add_executable(black_scholes_tangent Tutorials/black_scholes_tangent.cpp)
