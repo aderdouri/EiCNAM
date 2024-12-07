@@ -1,14 +1,20 @@
 cmake_minimum_required(VERSION 3.26 FATAL_ERROR)
 project(addCpp)
 
+find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+
 # Set the C++ standard
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Compiler flags
-set(CMAKE_CXX_FLAGS_DEBUG "-Wall -O0")
-set(CMAKE_CXX_FLAGS_RELEASE "-Wall -O2")
+#set(CMAKE_CXX_FLAGS_DEBUG "-Wall -O0")
+#set(CMAKE_CXX_FLAGS_RELEASE "-Wall -O2")
+
+# Clang-specific flags
+# Suppress specific warnings
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
 
 # Define source files for CppUnitTest
 set(SOURCE_FILES_CPPUNITTEST
@@ -65,7 +71,7 @@ set(SOURCE_FILES_AD_STARTER
     Tutorials/src/AdStarter.cpp
     Tutorials/tests/AdStarterTest.cpp
 )
-add_executable(AdStarter ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_AD_STARTER})
+#add_executable(AdStarter ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_AD_STARTER})
 
 
 set(SOURCE_FILES_BLACK_FORMULA
@@ -75,7 +81,7 @@ set(SOURCE_FILES_BLACK_FORMULA
     Tutorials/src/BlackFormula.cpp
     Tutorials/src/BlackFormulaTest.cpp    
 )
-add_executable(BlackFormula ${SOURCE_FILES_BLACK_FORMULA})
+#add_executable(BlackFormula ${SOURCE_FILES_BLACK_FORMULA})
 
 set(SOURCE_FILES_SABR_VOLATILITY_FORMULA
     Tutorials/src/Utils.h
@@ -84,7 +90,7 @@ set(SOURCE_FILES_SABR_VOLATILITY_FORMULA
     Tutorials/src/SabrVolatilityFormula.cpp
     Tutorials/src/SabrVolatilityFormulaTest.cpp
 )
-add_executable(SabrVolatilityFormula ${SOURCE_FILES_SABR_VOLATILITY_FORMULA})
+#add_executable(SabrVolatilityFormula ${SOURCE_FILES_SABR_VOLATILITY_FORMULA})
 
 set(SOURCE_FILES_SABR_PRICE_FORMULA
     Tutorials/src/Utils.h
@@ -95,13 +101,13 @@ set(SOURCE_FILES_SABR_PRICE_FORMULA
     Tutorials/src/SabrVolatilityFormula.cpp
     Tutorials/src/SabrPriceFormula.cpp
 )
-add_executable(SabrPriceFormula ${SOURCE_FILES_SABR_PRICE_FORMULA})
+#add_executable(SabrPriceFormula ${SOURCE_FILES_SABR_PRICE_FORMULA})
 
 
-add_executable(toyCodeChp9sections2to4 Tutorials/src/toyCodeChp9sections2to4.cpp)
-add_executable(toyCodeChp9section5 Tutorials/src/toyCodeChp9section5.cpp)
-add_executable(toyCodeChp15section2 Tutorials/src/toyCodeChp15section2.cpp)
-add_executable(monteCarloSimulation ${SOURCE_FILES_MONTE_CARLO})
+#add_executable(toyCodeChp9sections2to4 Tutorials/src/toyCodeChp9sections2to4.cpp)
+#add_executable(toyCodeChp9section5 Tutorials/src/toyCodeChp9section5.cpp)
+#add_executable(toyCodeChp15section2 Tutorials/src/toyCodeChp15section2.cpp)
+#add_executable(monteCarloSimulation ${SOURCE_FILES_MONTE_CARLO})
 
 
 set(SOURCE_FILES_BASIC_INSTRUMENTATION 
@@ -112,8 +118,66 @@ set(SOURCE_FILES_BASIC_INSTRUMENTATION_EXPR
     Tutorials/tests/BasicInstrumentationExprTest.cpp
 )
 
-add_executable (autoDiff ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_COMPFINANCE_AAD} ${SOURCE_FILES_BASIC_INSTRUMENTATION})
-target_compile_definitions(autoDiff PRIVATE AADET=0)
+#add_executable (autoDiff ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_COMPFINANCE_AAD} ${SOURCE_FILES_BASIC_INSTRUMENTATION})
+#target_compile_definitions(autoDiff PRIVATE AADET=0)
 
-add_executable (autoDiffExpr ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_COMPFINANCE_AAD} ${SOURCE_FILES_BASIC_INSTRUMENTATION_EXPR})
-target_compile_definitions(autoDiffExpr PRIVATE AADET=1)
+#add_executable (autoDiffExpr ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_COMPFINANCE_AAD} ${SOURCE_FILES_BASIC_INSTRUMENTATION_EXPR})
+#target_compile_definitions(autoDiffExpr PRIVATE AADET=1)
+
+
+set(SOURCE_FILES_DOC_UWE 
+    dcoUwe/dco_a1s/dco_a1s_type.hpp
+    dcoUwe/dco_a1s/dco_a1s_type.cpp
+    dcoUwe/dco_a1s/main.cpp
+)
+
+#add_executable (dcoUwe ${SOURCE_FILES_DOC_UWE})
+
+# Add executable for matrix exponential example
+#add_executable(matrixExponential Tutorials/src/matrixExponontial.cpp)
+
+# Link only Eigen3 library
+#target_link_libraries(matrixExponential Eigen3::Eigen)
+
+
+set(SOURCE_FILES_COMPFINANCE_ALL
+    CompFinance/AAD.cpp
+    CompFinance/AAD.cpp
+    CompFinance/AAD.h
+    CompFinance/AADExpr.h
+    CompFinance/AADNode.h
+    CompFinance/AADNumber.h
+    CompFinance/AADTape.h
+    CompFinance/ConcurrentQueue.h
+    CompFinance/ThreadPool.cpp
+    CompFinance/analytics.h
+    CompFinance/blocklist.h
+    CompFinance/choldc.h
+    CompFinance/gaussians.h
+    CompFinance/interp.h
+    CompFinance/ivs.h
+    CompFinance/main.h
+    CompFinance/matrix.h
+    CompFinance/mcBase.cpp
+    CompFinance/mcBase.h
+    CompFinance/mcMdl.h
+    CompFinance/mcMdlBS.h
+    CompFinance/mcMdlDupire.h
+    CompFinance/mcMdlMultiDisplaced.h
+    #CompFinance/mcMdlMultiDisplaced.cpp
+    CompFinance/mcPrd.h
+    CompFinance/mcPrdMulti.h
+    CompFinance/mrg32k3a.h
+    CompFinance/sobol.cpp
+    CompFinance/sobol.h
+    CompFinance/store.h
+    CompFinance/store.cpp
+    CompFinance/ThreadPool.h
+    CompFinance/toyCode.h
+    CompFinance/utility.h
+    CompFinanceTests/BlackScholesTest.cpp
+    CompFinanceTests/mertonTest.cpp
+    CompFinanceTests/AADriskTest.cpp
+)
+
+add_executable (compFinanceTest ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_COMPFINANCE_ALL})
