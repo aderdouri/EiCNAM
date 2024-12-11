@@ -29,6 +29,6 @@ TEST(mertonTest, mertonTest01)
     double meanJmp = 0.1;
     double stdJmp = 0.1;
 
-    double price = merton(spot, strike, vol, mat, intens, meanJmp, stdJmp   );
+    double price = merton(spot, strike, vol, mat, intens, meanJmp, stdJmp);
     println("price {}: ", price);
 }

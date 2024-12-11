@@ -175,9 +175,10 @@ set(SOURCE_FILES_COMPFINANCE_ALL
     CompFinance/ThreadPool.h
     CompFinance/toyCode.h
     CompFinance/utility.h
-    CompFinanceTests/BlackScholesTest.cpp
-    CompFinanceTests/mertonTest.cpp
-    CompFinanceTests/AADriskTest.cpp
+    #CompFinanceTests/BlackScholesTest.cpp
+    #CompFinanceTests/mertonTest.cpp
+    CompFinanceTests/AADriskPutEuropeanTest.cpp
+    CompFinanceTests/AADriskPutBarrierTest.cpp
 )
 
 add_executable (compFinanceTest ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_COMPFINANCE_ALL})

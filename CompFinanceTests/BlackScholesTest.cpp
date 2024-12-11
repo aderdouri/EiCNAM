@@ -34,4 +34,8 @@ TEST(BlackScholes, BlackScholesTest)
     const Model<double>* mdl = getModel<double>(store);
     const BlackScholes<double>* bs = dynamic_cast<const BlackScholes<double>*>(mdl);
     println("spot {}: ", bs->spot());
+    println("spot {}: ", bs->vol());
+    println("spot {}: ", bs->rate());
+    println("spot {}: ", bs->div());
+
 }
