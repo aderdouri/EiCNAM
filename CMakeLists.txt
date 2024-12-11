@@ -164,7 +164,6 @@ set(SOURCE_FILES_COMPFINANCE_ALL
     CompFinance/mcMdlBS.h
     CompFinance/mcMdlDupire.h
     CompFinance/mcMdlMultiDisplaced.h
-    #CompFinance/mcMdlMultiDisplaced.cpp
     CompFinance/mcPrd.h
     CompFinance/mcPrdMulti.h
     CompFinance/mrg32k3a.h
@@ -177,8 +176,9 @@ set(SOURCE_FILES_COMPFINANCE_ALL
     CompFinance/utility.h
     #CompFinanceTests/BlackScholesTest.cpp
     #CompFinanceTests/mertonTest.cpp
-    CompFinanceTests/AADriskPutEuropeanTest.cpp
-    CompFinanceTests/AADriskPutBarrierTest.cpp
+    #CompFinanceTests/AADriskPutEuropeanTest.cpp
+    #CompFinanceTests/AADriskPutBarrierTest.cpp
+    CompFinanceTests/DupireCalibrationTest.cpp
 )
 
 add_executable (compFinanceTest ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_COMPFINANCE_ALL})

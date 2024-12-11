@@ -58,7 +58,8 @@ TEST(AADriskPutEuropeanTest, AADriskPutEuropeanTest01)
         auto results = AADriskOne(modelid, productid, num, riskPayoff);
         println("results.riskPayoffValue: {}", results.riskPayoffValue);
 
-        const size_t n = results.risks.size(), N = n + 1;
+        const std::size_t n = results.risks.size();
+        const std::size_t N = n + 1;
         for (const auto &risk : results.risks)
         {
             println("risk: {}", risk);
