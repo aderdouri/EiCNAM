@@ -21,36 +21,34 @@ class TestResult;
 class Test
 {
 public:
-    Test (const std::string& testName,
-          std::string fileName,
-          long lineNumber);
+    Test(const std::string &testName,
+         std::string fileName,
+         long lineNumber);
 
-	virtual ~Test();
+    virtual ~Test();
 
-    const std::string& getFileName() const;
-    const long& getLineNumber() const;
-    const std::string& getName() const;
-    void run (TestResult& result);
-    virtual void runTest (TestResult& result) = 0;
+    const std::string &getFileName() const;
+    const long &getLineNumber() const;
+    const std::string &getName() const;
+    void run(TestResult &result);
+    virtual void runTest(TestResult &result) = 0;
 
 private:
-    std::string     myFileName;
-    long            myLineNumber;
-    std::string     myName;
+    std::string myFileName;
+    long myLineNumber;
+    std::string myName;
 };
 
-#define TEST(name,classUnderTest)\
-    class classUnderTest##name##Test : public Test\
-    { \
-        public: \
-            classUnderTest##name##Test () \
-            : \
-                Test ("TEST(" #name ", " #classUnderTest ")", \
-                      __FILE__, __LINE__) {} \
-            void runTest (TestResult& rEsUlT_); \
-    } classUnderTest##name##Instance; \
-    void classUnderTest##name##Test::runTest (TestResult& rEsUlT_)
-
+#define TEST(name, classUnderTest)                         \
+    class classUnderTest##name##Test : public Test         \
+    {                                                      \
+    public:                                                \
+        classUnderTest##name##Test()                       \
+            : Test("TEST(" #name ", " #classUnderTest ")", \
+                   __FILE__, __LINE__) {}                  \
+        void runTest(TestResult &rEsUlT_);                 \
+    } classUnderTest##name##Instance;                      \
+    void classUnderTest##name##Test::runTest(TestResult &rEsUlT_)
 
 // Here is a collection of testing macros that can be used in the
 // bodies of tests.  CHECK tests a boolean expression and records
@@ -63,43 +61,46 @@ private:
 // them directly and print out their values in the test output is
 // invaluable.
 
-#define CHECK(condition) \
-{\
-    if (!(condition)) { \
-        rEsUlT_.addFailure (Failure (#condition, __FILE__, __LINE__)); \
-        return; \
-    }\
-}
+#define CHECK(condition)                                                 \
+    {                                                                    \
+        if (!(condition))                                                \
+        {                                                                \
+            rEsUlT_.addFailure(Failure(#condition, __FILE__, __LINE__)); \
+            return;                                                      \
+        }                                                                \
+    }
 
-#define CHECK_LONGS_EQUAL(expected,actual)\
-{\
-    long _expected = (expected);\
-    long _actual = (actual);\
-    if (_expected != _actual) {\
-        std::ostringstream message; \
-        message << "expected '" << (_expected) << "' but was '" << (_actual) << "'"; \
-        rEsUlT_.addFailure (Failure (message.str(), __FILE__, __LINE__));\
-        return; \
-    }\
-}
+#define CHECK_LONGS_EQUAL(expected, actual)                                              \
+    {                                                                                    \
+        long _expected = (expected);                                                     \
+        long _actual = (actual);                                                         \
+        if (_expected != _actual)                                                        \
+        {                                                                                \
+            std::ostringstream message;                                                  \
+            message << "expected '" << (_expected) << "' but was '" << (_actual) << "'"; \
+            rEsUlT_.addFailure(Failure(message.str(), __FILE__, __LINE__));              \
+            return;                                                                      \
+        }                                                                                \
+    }
 
-#define CHECK_DOUBLES_EQUAL(expected,actual,threshold)\
-{\
-    double _expected = (expected);\
-    double _actual = (actual);\
-    if (fabs ((_expected)-(_actual)) > (threshold)) {\
-        std::ostringstream message; \
-        message << "expected '" << (_expected) << "' but was '" << (_actual) << "'"; \
-        rEsUlT_.addFailure (Failure (message.str(), __FILE__, __LINE__));\
-        return; \
-    }\
-}
+#define CHECK_DOUBLES_EQUAL(expected, actual, threshold)                                 \
+    {                                                                                    \
+        double _expected = (expected);                                                   \
+        double _actual = (actual);                                                       \
+        if (fabs((_expected) - (_actual)) > (threshold))                                 \
+        {                                                                                \
+            std::ostringstream message;                                                  \
+            message << "expected '" << (_expected) << "' but was '" << (_actual) << "'"; \
+            rEsUlT_.addFailure(Failure(message.str(), __FILE__, __LINE__));              \
+            return;                                                                      \
+        }                                                                                \
+    }
 
-#define CHECK_FAIL(text) \
-{\
-    rEsUlT_.addFailure (Failure ((text), __FILE__, __LINE__)); \
-    return; \
-}
+#define CHECK_FAIL(text)                                         \
+    {                                                            \
+        rEsUlT_.addFailure(Failure((text), __FILE__, __LINE__)); \
+        return;                                                  \
+    }
 
 // The following check for equality.
 //
@@ -108,29 +109,30 @@ private:
 // BEWARE: The arguments are evaluated more than once!
 //         If this is a problem then use CHECK instead.
 
-
 // Use this when the things being compared have a wostream inserter.
 
-#define CHECK_WEQUAL(expected, actual)\
-{\
-    if (! ((expected) == (actual))) {\
-        std::wostringstream message; \
-        message << L"expected '" << (expected) << L"' but was '" << (actual) << L"'"; \
-        rEsUlT_.addFailure (Failure (message.str(), __FILE__, __LINE__));\
-        return; \
-    }\
-}
+#define CHECK_WEQUAL(expected, actual)                                                    \
+    {                                                                                     \
+        if (!((expected) == (actual)))                                                    \
+        {                                                                                 \
+            std::wostringstream message;                                                  \
+            message << L"expected '" << (expected) << L"' but was '" << (actual) << L"'"; \
+            rEsUlT_.addFailure(Failure(message.str(), __FILE__, __LINE__));               \
+            return;                                                                       \
+        }                                                                                 \
+    }
 
 // Use this when the things being compared have an ostream inserter.
 
-#define CHECK_EQUAL(expected, actual)\
-{\
-    if (! ((expected) == (actual))) {\
-        std::ostringstream message; \
-        message << "expected '" << (expected) << "' but was '" << (actual) << "'"; \
-        rEsUlT_.addFailure (Failure (message.str(), __FILE__, __LINE__));\
-        return; \
-    }\
-}
+#define CHECK_EQUAL(expected, actual)                                                  \
+    {                                                                                  \
+        if (!((expected) == (actual)))                                                 \
+        {                                                                              \
+            std::ostringstream message;                                                \
+            message << "expected '" << (expected) << "' but was '" << (actual) << "'"; \
+            rEsUlT_.addFailure(Failure(message.str(), __FILE__, __LINE__));            \
+            return;                                                                    \
+        }                                                                              \
+    }
 
 #endif

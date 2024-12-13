@@ -19,6 +19,6 @@ public:
     long lineNumber;
 };
 
-std::ostream& operator<< (std::ostream& stream, Failure& failure);
+std::ostream &operator<<(std::ostream &stream, Failure &failure);
 
 #endif

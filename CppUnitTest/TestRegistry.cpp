@@ -3,47 +3,53 @@
 #include "TestRegistry.h"
 #include <iostream>
 
-void TestRegistry::addTest (Test *test) 
+void TestRegistry::addTest(Test *test)
 {
-    instance ().add (test);
+    instance().add(test);
 }
 
-void TestRegistry::runAllTests (TestResult& result) 
+void TestRegistry::runAllTests(TestResult &result)
 {
-    instance ().run (result);
+    instance().run(result);
 }
 
-TestRegistry& TestRegistry::instance () {
+TestRegistry &TestRegistry::instance()
+{
     static TestRegistry registry;
     return registry;
 }
 
-void TestRegistry::add (Test *test) {
-    //std::cout << "testName :" << test->getName() << "testFileName" << test->getFileName() << "\n";
-    ///Users/aderdouri/Downloads/DeepL/Test/loadDataTest.cpp
-    ///Users/aderdouri/Downloads/DeepL/Test/FCLayerTest.cpp
-    ///Users/aderdouri/Downloads/DeepL/src/SoftmaxLayerTest.cpp
-    //Test/matrixFunctionsTest.cpp
-    // if (
-    //     //test->getFileName().ends_with("Test/QuadraticOracleTest.cpp") ||
-    //     test->getFileName().ends_with("DeepL/Test/SoftmaxLayerTest.cpp")
-    // )
+void TestRegistry::add(Test *test)
+{
+    // std::cout << "testName :" << test->getName() << "testFileName" << test->getFileName() << "\n";
+    /// Users/aderdouri/Downloads/DeepL/Test/loadDataTest.cpp
+    /// Users/aderdouri/Downloads/DeepL/Test/FCLayerTest.cpp
+    /// Users/aderdouri/Downloads/DeepL/src/SoftmaxLayerTest.cpp
+    // Test/matrixFunctionsTest.cpp
+    //  if (
+    //      //test->getFileName().ends_with("Test/QuadraticOracleTest.cpp") ||
+    //      test->getFileName().ends_with("DeepL/Test/SoftmaxLayerTest.cpp")
+    //  )
     {
-        tests.push_back (test);
+        tests.push_back(test);
     }
 }
 
-void TestRegistry::run (TestResult& result) {
+void TestRegistry::run(TestResult &result)
+{
     int testCount = 0;
     int errorCount = 0;
-    result.startTests ();
+    result.startTests();
     std::vector<Test *>::iterator it;
-    for (it = tests.begin (); it != tests.end (); ++it) {
+    for (it = tests.begin(); it != tests.end(); ++it)
+    {
         ++testCount;
-        try {
-            (*it)->run (result);
+        try
+        {
+            (*it)->run(result);
         }
-        catch (std::exception &e) {
+        catch (std::exception &e)
+        {
             ++errorCount;
             std::cout << std::endl
                       << (*it)->getFileName()
@@ -54,7 +60,8 @@ void TestRegistry::run (TestResult& result) {
                       << (*it)->getName()
                       << std::endl;
         }
-        catch (...) {
+        catch (...)
+        {
             ++errorCount;
             std::cout << std::endl
                       << (*it)->getFileName()
@@ -64,9 +71,10 @@ void TestRegistry::run (TestResult& result) {
                       << std::endl;
         }
     }
-    result.endTests ();
+    result.endTests();
     int failureCount = result.getFailureCount();
-    if (failureCount > 0 || errorCount > 0) std::cout << std::endl;
+    if (failureCount > 0 || errorCount > 0)
+        std::cout << std::endl;
     std::cout << testCount << " tests, "
               << result.getFailureCount() << " failures, "
               << errorCount << " errors" << std::endl;

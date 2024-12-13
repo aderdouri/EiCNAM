@@ -47,7 +47,7 @@ TEST(AADriskPutEuropeanTest, AADriskPutEuropeanTest01)
         putBlackScholes(spot, vol, qSpot, rate, div, modelid);
 
         // Numerical parameters
-        bool parallel{true};
+        bool parallel{false};
         bool useSobol{true};
         int numPath{500000};
         int seed1{12345};

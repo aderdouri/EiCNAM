@@ -5,14 +5,14 @@ Failure::Failure(
     std::string theFileName,
     long theLineNumber)
     : condition(theCondition),
-    fileName(theFileName),
-    lineNumber(theLineNumber)
+      fileName(theFileName),
+      lineNumber(theLineNumber)
 {
 }
 
-std::ostream& operator<<(
-    std::ostream& stream,
-    Failure& failure)
+std::ostream &operator<<(
+    std::ostream &stream,
+    Failure &failure)
 {
     stream << std::endl
            << failure.fileName

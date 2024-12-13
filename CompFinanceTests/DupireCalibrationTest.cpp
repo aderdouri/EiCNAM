@@ -46,32 +46,32 @@ TEST(DupireCalibrationTest, DupireCalibrationTest01)
         auto results = dupireCalib(vspots, maxDs, vtimes, maxDt, spot, vol,
                                    jmpIntens, jmpAverage, jmpStd);
 
-        std::vector<double> spots = results.spots;
-        std::vector<Time> times = results.times;
-        matrix<double> lVols = results.lVols;
+        // std::vector<double> spots = results.spots;
+        // std::vector<Time> times = results.times;
+        // matrix<double> lVols = results.lVols;
 
-        for (auto spot : spots)
-        {
-            std::cout << spot << std::endl;
-        }
+        // for (auto spot : spots)
+        // {
+        //     std::cout << spot << std::endl;
+        // }
 
-        for (auto time : times)
-        {
-            std::cout << time << std::endl;
-        }
+        // for (auto time : times)
+        // {
+        //     std::cout << time << std::endl;
+        // }
 
-        std::size_t rows = lVols.rows();
-        std::size_t cols = lVols.cols();
-        // std::vector<double>   vect = lVols.getVector(rows, cols);
+        // std::size_t rows = lVols.rows();
+        // std::size_t cols = lVols.cols();
+        // // std::vector<double>   vect = lVols.getVector(rows, cols);
 
-        for (std::size_t i = 0; i < rows; ++i)
-        {
-            for (std::size_t j = 0; j < cols; ++j)
-            {
-                std::cout << lVols[i][j] << " ";
-            }
-            std::cout << std::endl;
-        }
+        // for (std::size_t i = 0; i < rows; ++i)
+        // {
+        //     for (std::size_t j = 0; j < cols; ++j)
+        //     {
+        //         std::cout << lVols[i][j] << " ";
+        //     }
+        //     std::cout << std::endl;
+        // }
     }
     catch (const std::exception &e)
     {

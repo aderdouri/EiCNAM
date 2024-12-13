@@ -3,8 +3,7 @@
 #include <iostream>
 
 TestResult::TestResult()
-:
-    failureCount (0)
+    : failureCount(0)
 {
 }
 
@@ -12,17 +11,17 @@ void TestResult::testWasRun()
 {
 }
 
-void TestResult::startTests ()
+void TestResult::startTests()
 {
 }
 
-void TestResult::addFailure (Failure failure)
+void TestResult::addFailure(Failure failure)
 {
     std::cout << failure << std::endl;
     failureCount++;
 }
 
-void TestResult::endTests ()
+void TestResult::endTests()
 {
 }
 
