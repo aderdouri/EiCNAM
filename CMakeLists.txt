@@ -147,6 +147,9 @@ set(SOURCE_FILES_DOC_UWE
 #target_link_libraries(matrixExponential Eigen3::Eigen)
 
 
+add_executable(mdspan Tutorials/src/mdspan.cpp)
+
+
 set(SOURCE_FILES_COMPFINANCE_ALL
     CompFinance/AAD.cpp
     CompFinance/AAD.cpp
