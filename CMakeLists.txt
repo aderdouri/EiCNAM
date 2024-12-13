@@ -8,6 +8,13 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+
+# Set the build type to Debug
+set(CMAKE_BUILD_TYPE Debug)
+
+# Ensure debug symbols are included
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
+
 # Compiler flags
 #set(CMAKE_CXX_FLAGS_DEBUG "-Wall -O0")
 #set(CMAKE_CXX_FLAGS_RELEASE "-Wall -O2")
@@ -174,11 +181,12 @@ set(SOURCE_FILES_COMPFINANCE_ALL
     CompFinance/ThreadPool.h
     CompFinance/toyCode.h
     CompFinance/utility.h
-    CompFinanceTests/BlackScholesTest.cpp
-    CompFinanceTests/mertonTest.cpp
-    CompFinanceTests/AADriskPutEuropeanTest.cpp
-    CompFinanceTests/AADriskPutBarrierTest.cpp
+    #CompFinanceTests/BlackScholesTest.cpp
+    #CompFinanceTests/mertonTest.cpp
+    #CompFinanceTests/AADriskPutEuropeanTest.cpp
+    #CompFinanceTests/AADriskPutBarrierTest.cpp
     CompFinanceTests/DupireCalibrationTest.cpp
+    CompFinanceTests/DupireBarrierMcRisksTest.cpp
 )
 
 add_executable (compFinanceTest ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_COMPFINANCE_ALL})

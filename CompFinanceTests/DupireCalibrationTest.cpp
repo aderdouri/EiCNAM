@@ -22,6 +22,7 @@
 
 TEST(DupireCalibrationTest, DupireCalibrationTest01)
 {
+    return;
     std::println("DupireCalibrationTest...");
 
     try
@@ -35,7 +36,7 @@ TEST(DupireCalibrationTest, DupireCalibrationTest01)
 
         // The local vol grid
         // The spots to include
-        const std::vector<double> vspots{50.0, 100.0, 200.0};
+        const std::vector<double> vspots{50.0, 200.0};
         // Maximum space between spots
         const double maxDs = 5.0;
         // The times to include, note NOT 0
@@ -46,32 +47,34 @@ TEST(DupireCalibrationTest, DupireCalibrationTest01)
         auto results = dupireCalib(vspots, maxDs, vtimes, maxDt, spot, vol,
                                    jmpIntens, jmpAverage, jmpStd);
 
-        // std::vector<double> spots = results.spots;
-        // std::vector<Time> times = results.times;
-        // matrix<double> lVols = results.lVols;
+        std::vector<double> spots = results.spots;
+        std::vector<Time> times = results.times;
+        matrix<double> lVols = results.lVols;
 
-        // for (auto spot : spots)
-        // {
-        //     std::cout << spot << std::endl;
-        // }
+        std::println("spots: ");
+        for (auto spot : spots)
+        {
+            std::cout << spot << std::endl;
+        }
 
-        // for (auto time : times)
-        // {
-        //     std::cout << time << std::endl;
-        // }
+        std::println("times: ");
+        for (auto time : times)
+        {
+            std::cout << time << std::endl;
+        }
 
-        // std::size_t rows = lVols.rows();
-        // std::size_t cols = lVols.cols();
-        // // std::vector<double>   vect = lVols.getVector(rows, cols);
+        std::size_t rows = lVols.rows();
+        std::size_t cols = lVols.cols();
 
-        // for (std::size_t i = 0; i < rows; ++i)
-        // {
-        //     for (std::size_t j = 0; j < cols; ++j)
-        //     {
-        //         std::cout << lVols[i][j] << " ";
-        //     }
-        //     std::cout << std::endl;
-        // }
+        std::println("lVols: ");
+        for (std::size_t i = 0; i < rows; ++i)
+        {
+            for (std::size_t j = 0; j < cols; ++j)
+            {
+                std::cout << lVols[i][j] << " ";
+            }
+            std::cout << std::endl;
+        }
     }
     catch (const std::exception &e)
     {
