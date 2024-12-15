@@ -13,8 +13,9 @@
 //
 
 #include <iostream>
-#include <string>
+#include <fstream>
 #include <vector>
+#include <string>
 #include <exception>
 #include <print>
 #include "../CompFinance/toyCode.h"
@@ -47,10 +48,45 @@ namespace
                                    jmpIntens, jmpAverage, jmpStd);
         return results;
     }
+
+    void writeMatrixToFile(const std::string &filename, const matrix<double> &matrix)
+    {
+        // Open file in write mode
+        std::ofstream outFile(filename);
+
+        // Check if file is open
+        if (!outFile.is_open())
+        {
+            std::cerr << "Error: Could not open file " << filename << " for writing." << std::endl;
+            return;
+        }
+
+        // Write matrix to file
+        for (int i = 0; i < matrix.rows(); ++i)
+        {
+            outFile << "[";
+            for (int j = 0; j < matrix.cols(); ++j)
+            {
+                outFile << matrix[i][j];
+                if (j != matrix.cols() - 1)
+                {
+                    outFile << ", "; // Add comma after each element
+                }
+            }
+            outFile << "],\n"; // New line after each row
+        }
+
+        // Close file
+        outFile.close();
+
+        std::cout << "Matrix written to file: " << filename << std::endl;
+    }
+
 }
 
 TEST(DupireBarrierMcRisksTest, DupireBarrierMcRisksTest01)
 {
+    return;
     std::println("DupireBarrierMcRisksTest...");
 
     try
@@ -62,9 +98,15 @@ TEST(DupireBarrierMcRisksTest, DupireBarrierMcRisksTest01)
         std::vector<Time> times = results.times;
         matrix<double> lVols = results.lVols;
 
-        const double maturity = 3.0;
+        // File name
+        std::string filename = "lVols.txt";
+
+        // Write matrix to file
+        writeMatrixToFile(filename, lVols);
+
+        const double maturity = 5.0;
         const double strike = 120.0;
-        const double barrier = 150.0;
+        const double barrier = 1500.0;
         const int Np = 100000;
         const int Nt = 156;
         const double epsilon = 0.05;

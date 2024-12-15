@@ -187,9 +187,10 @@ set(SOURCE_FILES_COMPFINANCE_ALL
     #CompFinanceTests/BlackScholesTest.cpp
     #CompFinanceTests/mertonTest.cpp
     #CompFinanceTests/AADriskPutEuropeanTest.cpp
-    #CompFinanceTests/AADriskPutBarrierTest.cpp
+    CompFinanceTests/AADriskPutBarrierTest.cpp
     CompFinanceTests/DupireCalibrationTest.cpp
     CompFinanceTests/DupireBarrierMcRisksTest.cpp
+    CompFinanceTests/DupireMonteCarlo.cpp
 )
 
 add_executable (compFinanceTest ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_COMPFINANCE_ALL})
