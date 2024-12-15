@@ -47,7 +47,7 @@ TEST(DupireMonteCarlo, DupireMonteCarlo01)
         const double S0{100.0};
         const double maturity = 2.0;
         const double strike = 120.0;
-        const double barrier = 1500.0;
+        const double barrier = 150.0;
         const int Np = 500000;
         const int Nt = 156;
         const double epsilon = 0.05;
