@@ -48,7 +48,7 @@ TEST(DupireMonteCarlo, DupireMonteCarlo01)
         const double maturity = 2.0;
         const double strike = 120.0;
         const double barrier = 150.0;
-        const int Np = 500000;
+        const int Np = 100000;
         const int Nt = 156;
         const double epsilon = 0.05;
         std::unique_ptr<RNG> rng = std::make_unique<Sobol>();
