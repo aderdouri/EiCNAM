@@ -191,6 +191,7 @@ set(SOURCE_FILES_COMPFINANCE_ALL
     CompFinanceTests/DupireCalibrationTest.cpp
     CompFinanceTests/DupireBarrierMcRisksTest.cpp
     CompFinanceTests/DupireMonteCarlo.cpp
+    CompFinanceTests/DupireMonteCarloFDM.cpp
 )
 
 add_executable (compFinanceTest ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_COMPFINANCE_ALL})
