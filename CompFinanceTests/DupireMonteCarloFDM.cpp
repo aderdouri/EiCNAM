@@ -50,8 +50,10 @@ TEST(DupireMonteCarloFDM, DupireMonteCarloFDM01)
         const double strike = 120.0;
         const double barrier = 150.0;
         const int Np = 500000;
-        const int Nt = 156;
+        const int Nt = 312;
         const double epsilon = 0.05;
+        const double VOL_SHIFT = 0.01;
+
         std::unique_ptr<RNG> rng = std::make_unique<Sobol>();
         rng->init(Nt);
 
@@ -101,7 +103,6 @@ TEST(DupireMonteCarloFDM, DupireMonteCarloFDM01)
         // std::println("delta_fdm: {}", delta_fdm);
 
         auto start_time = std::chrono::high_resolution_clock::now();
-        const double VOL_SHIFT = 0.05;
 
         matrix<double> prices_plus_vol(lVols.rows(), lVols.cols());
         matrix<double> prices_minus_vol(lVols.rows(), lVols.cols());
