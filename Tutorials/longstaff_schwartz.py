@@ -109,7 +109,7 @@ K = 95.0
 sigma = 0.25
 T = 180 / 365
 r = 0.05
-Np = 100000
+Np = 5000
 NT = 1000
 
 # Test the algorithm
