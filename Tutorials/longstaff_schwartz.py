@@ -1,6 +1,6 @@
 import torch
 
-def longstaff_schwartz(S0, K, sigma, T, r, Np, NT):
+def longstaff_schwartz(S0, K, sigma, T, r, Np, NT, M):
     """
     Longstaff-Schwartz algorithm implemented in PyTorch.
 
@@ -12,6 +12,7 @@ def longstaff_schwartz(S0, K, sigma, T, r, Np, NT):
         r: Risk-free rate.
         Np: Number of simulated paths.
         NT: Number of time steps.
+        M: Exercise frequency.
 
     Returns:
         V: Option value.
@@ -34,7 +35,7 @@ def longstaff_schwartz(S0, K, sigma, T, r, Np, NT):
 
     # Backward induction
     cash_flow = cash_flow.clone()  # Ensure no inplace modification
-    for t in range(NT - 2, 0, -1):
+    for t in range(NT - 2, 0, -M):  # Adjust the step to M
         in_the_money = Sp[:, t] < K
         itm_indices = torch.where(in_the_money)[0]
 
@@ -62,7 +63,7 @@ def longstaff_schwartz(S0, K, sigma, T, r, Np, NT):
     V = cash_flow.mean() * torch.exp(-r * dt)
     return V
 
-def calculate_sensitivities(S0, K, sigma, T, r, Np, NT):
+def calculate_sensitivities(S0, K, sigma, T, r, Np, NT, M):
     """
     Calculate sensitivities (Delta, Vega, Rho, Theta) using automatic differentiation.
 
@@ -74,6 +75,7 @@ def calculate_sensitivities(S0, K, sigma, T, r, Np, NT):
         r: Risk-free rate.
         Np: Number of simulated paths.
         NT: Number of time steps.
+        M: Exercise frequency.
 
     Returns:
         sensitivities: Dictionary containing Delta, Vega, Rho, Theta.
@@ -86,7 +88,7 @@ def calculate_sensitivities(S0, K, sigma, T, r, Np, NT):
     # Enable anomaly detection
     with torch.autograd.set_detect_anomaly(True):
         # Compute option value
-        V = longstaff_schwartz(S0_t, K, sigma_t, T_t, r_t, Np, NT)
+        V = longstaff_schwartz(S0_t, K, sigma_t, T_t, r_t, Np, NT, M)
 
         # Compute gradients
         V.backward()
@@ -111,13 +113,55 @@ T = 180 / 365
 r = 0.05
 Np = 50
 NT = 1000
+M = 12
 
 # Test the algorithm
-option_value = longstaff_schwartz(S0, K, sigma, T, r, Np, NT)
-sensitivities = calculate_sensitivities(S0, K, sigma, T, r, Np, NT)
-
+option_value = longstaff_schwartz(S0, K, sigma, T, r, Np, NT, M)
 print(f"Option Value: {option_value}")
-print(f"Sensitivities: {sensitivities}")
+
+#sensitivities = calculate_sensitivities(S0, K, sigma, T, r, Np, NT, M)
+#print(f"Sensitivities: {sensitivities}")
+
+# Parameters for testing
+S0 = 1.0
+K = 0.9
+sigma = 0.20
+T = 3.0
+r = 0.15
+Np = 5000
+NT = 500000
+M = 12
+
+# Test the algorithm
+option_value = longstaff_schwartz(S0, K, sigma, T, r, Np, NT, M)
+print(f"Option Value: {option_value}")
+
+#sensitivities = calculate_sensitivities(S0, K, sigma, T, r, Np, NT, M)
+#print(f"Sensitivities: {sensitivities}")
 
 
+S0 = 1.0
+K = 1.0
+sigma = 0.20
+T = 3.0
+r = 0.15
+Np = 5000
+NT = 500000
+M = 12
 
+# Test the algorithm
+option_value = longstaff_schwartz(S0, K, sigma, T, r, Np, NT, M)
+print(f"Option Value: {option_value}")
+
+S0 = 1.0
+K = 1.1
+sigma = 0.20
+T = 3.0
+r = 0.15
+Np = 5000
+NT = 500000
+M = 12
+
+# Test the algorithm
+option_value = longstaff_schwartz(S0, K, sigma, T, r, Np, NT, M)
+print(f"Option Value: {option_value}")

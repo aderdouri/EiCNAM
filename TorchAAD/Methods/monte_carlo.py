@@ -10,3 +10,9 @@ class MonteCarloMethod(PricingMethod):
             return f"Monte Carlo price for {instrument.name} with S0={instrument.S0}"
         elif instrument.name == "Bermudan Option":
             return f"Monte Carlo price for {instrument.name} with S0={instrument.S0}"
+
+    def longstaff_schwartz(self, instrument):
+        if instrument.name == "European Option":
+            return f"Longstaff-Schwartz price for {instrument.name} with S0={instrument.S0}"
+        elif instrument.name == "Bermudan Option":
+            return f"Longstaff-Schwartz price for {instrument.name} with S0={instrument.S0}"

@@ -4,4 +4,6 @@ class PricingEngine:
         self.model = model
 
     def price_instrument(self, instrument, pricing_method):
-        return instrument.price(pricing_method)
+        # Consider that the option can be exercised every three months (M = 12)
+        M = 12
+        return instrument.price(pricing_method, M)
