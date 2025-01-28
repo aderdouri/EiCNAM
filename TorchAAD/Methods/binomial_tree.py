@@ -2,19 +2,17 @@ import torch
 from TorchAAD.Methods.base import PricingMethod
 
 class BinomialTreeMethod(PricingMethod):
-    def __init__(self, num_steps):
+    def __init__(self, num_steps, exercise_times=None):
         self.num_steps = num_steps
+        self.exercise_times = exercise_times if exercise_times is not None else []
 
-    def price(self, instrument):
-        return f"Binomial Tree price for {instrument.name} with S0={instrument.S0}"
-
-    def price_bermudan_option(self, instrument, exercise_dates):
-        S0 = instrument.S0
+    def price(self, instrument, S0=None, T=None, r=None, sigma=None):
+        S0 = S0 if S0 is not None else instrument.S0
         K = instrument.strike
-        T = instrument.maturity
-        r = instrument.rate
-        sigma = instrument.volatility
-        dt = torch.tensor(T / self.num_steps)
+        T = T if T is not None else instrument.maturity
+        r = r if r is not None else instrument.rate
+        sigma = sigma if sigma is not None else instrument.volatility
+        dt = T / torch.tensor(self.num_steps, dtype=torch.float32)  # Ensure dt is a tensor        
         u = torch.exp(sigma * torch.sqrt(dt))
         d = 1 / u
         q = (torch.exp(r * dt) - d) / (u - d)
@@ -26,37 +24,29 @@ class BinomialTreeMethod(PricingMethod):
         # Step back through the tree
         for step in range(self.num_steps - 1, -1, -1):
             option_values = torch.exp(-r * dt) * (q * option_values[1:] + (1 - q) * option_values[:-1])
-            if step in exercise_dates:
-                asset_prices = S0 * d**torch.arange(step, -1, -1) * u**torch.arange(0, step + 1)
-                option_values = torch.maximum(option_values, K - asset_prices)
+            if (step + 1) * dt.item() in self.exercise_times:
+                option_values = torch.maximum(option_values, K - asset_prices[:step + 1])
 
         return option_values[0]
 
-    def calculate_cva(self, instrument, default_prob, recovery_rate):
-        dt = torch.tensor(instrument.maturity / self.num_steps)
-        u = torch.exp(instrument.volatility * torch.sqrt(dt))
-        d = 1 / u
-        p = (torch.exp(instrument.rate * dt) - d) / (u - d)
-        
-        # Initialize asset prices at maturity
-        asset_prices = torch.zeros(self.num_steps + 1)
-        asset_prices[0] = instrument.S0 * (d ** self.num_steps)
-        for i in range(1, self.num_steps + 1):
-            asset_prices[i] = asset_prices[i - 1].clone() * (u / d)
-        
-        # Initialize option values at maturity
-        option_values = torch.maximum(asset_prices - instrument.strike, torch.tensor(0.0))
-        
-        # Backward induction to get option value at t=0
-        for step in range(self.num_steps - 1, -1, -1):
-            for i in range(step + 1):
-                option_values[i] = torch.exp(-instrument.rate * dt) * (p * option_values[i + 1] + (1 - p) * option_values[i])
-        
-        # Calculate CVA manually
-        cva = torch.tensor(0.0)
-        for step in range(1, self.num_steps + 1):
-            default_leg = (1 - recovery_rate) * torch.exp(-instrument.rate * step * dt) * option_values[step]
-            survival_prob = (1 - default_prob) ** step
-            cva += default_leg * (1 - survival_prob)
-        
-        return cva
+    def calculate_greeks(self, instrument):
+        S0 = torch.tensor(instrument.S0, dtype=torch.float32, requires_grad=True)
+        T = torch.tensor(instrument.maturity, dtype=torch.float32, requires_grad=True)
+        r = torch.tensor(instrument.rate, dtype=torch.float32, requires_grad=True)
+        sigma = torch.tensor(instrument.volatility, dtype=torch.float32, requires_grad=True)
+
+        price = self.price(instrument, S0=S0, T=T, r=r, sigma=sigma)
+        price.backward()
+
+        delta = S0.grad.item()
+        vega = sigma.grad.item()
+        rho = r.grad.item()
+        theta = T.grad.item()
+
+        return {
+            'price': price.item(),
+            'delta': delta,
+            'vega': vega,
+            'rho': rho,
+            'theta': theta
+        }
