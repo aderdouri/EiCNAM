@@ -195,3 +195,10 @@ set(SOURCE_FILES_COMPFINANCE_ALL
 )
 
 add_executable (compFinanceTest ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_COMPFINANCE_ALL})
+
+find_package(Torch REQUIRED)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
+
+add_executable(torchCppExample CompFinanceTests/TorchCppExampleTest.cpp)
+target_link_libraries(torchCppExample "${TORCH_LIBRARIES}")
+set_property(TARGET torchCppExample PROPERTY CXX_STANDARD 17)
