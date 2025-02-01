@@ -3,7 +3,8 @@ import torch
 from Instruments.european_option import EuropeanOption
 
 from Engine.stochastic_process import NormalProcess, LogNormalProcess
-from Engine.simulator import simulate_process
+#from Engine.simulator import simulate_process
+from Methods.monte_carlo import MonteCarloMethod
 
 class TestEuropeanOption(unittest.TestCase):
     def setUp(self):        
@@ -27,40 +28,32 @@ class TestEuropeanOption(unittest.TestCase):
         # CVA and intensity model parameters
         LGD = 0.6  # Loss given default
         lambda_0 = 1.0  # Initial hazard rate
-        n_paths = 50000  # Number of Monte Carlo paths
-        time_steps = 1000  # Number of time steps
+        num_paths = 50000  # Number of Monte Carlo paths
+        num_steps = 1000  # Number of time steps
 
         # Generate time grid
-        dt = T / time_steps
-        time_grid = torch.linspace(0, T, time_steps)
-
-        # Simulate default times using an intensity model
-        def simulate_default_times(lambda_t, time_steps, T, n_paths):
-            dt = T / time_steps
-            cumulative_hazard = torch.cumsum(lambda_t * dt * torch.ones(time_steps), dim=0)
-            survival_probs = torch.exp(-cumulative_hazard)
-            defaults = torch.rand(n_paths, time_steps) > survival_probs
-            default_times = torch.argmax(defaults.type(torch.int), dim=1) * dt
-            default_times[default_times == 0] = T + 1  # No default
-            return default_times
+        dt = T / num_steps
+        time_grid = torch.linspace(0, T, num_steps)
 
         # Calculate CVA
         def calculate_cva(LGD, S, K, T, r, lambda_t, time_grid):
             payoffs = torch.maximum(S[:, -1] - K, torch.tensor(0.0))  # Max(S_T - K, 0)
             # Convert r and T to tensors before using them in torch.exp
             discount_factors = torch.exp(-torch.tensor(r, dtype=torch.float32) * torch.tensor(T, dtype=torch.float32))
-            cumulative_hazard = torch.sum(lambda_t * dt * torch.ones(time_steps))
+            cumulative_hazard = torch.sum(lambda_t * dt * torch.ones(num_steps))
             survival_probs = torch.exp(-cumulative_hazard)
             cva = LGD * torch.mean((1 - survival_probs) * discount_factors * payoffs)
             return cva
 
         # Enable automatic differentiation for lambda_0
         lambda_t = torch.tensor(lambda_0, requires_grad=True)
+
         process = LogNormalProcess(r, sigma)
-        S = simulate_process(process, S0, T, time_steps, n_paths)       
+        mc = MonteCarloMethod(process, S0, T, num_paths, num_steps)
+        paths = mc.simulate()
 
         # Compute CVA using automatic differentiation
-        cva = calculate_cva(LGD, S, K, T, r, lambda_t, time_grid)
+        cva = calculate_cva(LGD, paths, K, T, r, lambda_t, time_grid)
         
         # Perform backpropagation to compute the gradient of CVA w.r.t. lambda_0
         cva.backward()
