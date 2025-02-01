@@ -1,5 +1,5 @@
 import unittest
-from Engine.pricing_engine import PricingEngine
+from TorchAAD.Engine.stochastic_process import PricingEngine
 from Models.black_scholes import BlackScholesModel
 from Instruments.european_option import EuropeanOption
 from Methods.monte_carlo import MonteCarloMethod

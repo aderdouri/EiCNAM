@@ -5,14 +5,9 @@ class MonteCarloMethod(PricingMethod):
         self.num_paths = num_paths
         self.num_steps = num_steps
 
+    def simulate_paths(self, S0, rate, volatility, maturity):
+        return f"Simulated paths for S0={S0}, rate={rate}, volatility={volatility}, maturity={maturity}"
+        
     def price(self, instrument):
-        if instrument.name == "European Option":
-            return f"Monte Carlo price for {instrument.name} with S0={instrument.S0}"
-        elif instrument.name == "Bermudan Option":
-            return f"Monte Carlo price for {instrument.name} with S0={instrument.S0}"
-
-    def longstaff_schwartz(self, instrument):
-        if instrument.name == "European Option":
-            return f"Longstaff-Schwartz price for {instrument.name} with S0={instrument.S0}"
-        elif instrument.name == "Bermudan Option":
-            return f"Longstaff-Schwartz price for {instrument.name} with S0={instrument.S0}"
+        print(f"Monte Carlo price for {instrument.name}")
+        #print(self.simulate_paths(instrument.S0, instrument.r, instrument.sigma, instrument.T))
