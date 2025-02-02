@@ -22,7 +22,7 @@ class TestEuropeanOption(unittest.TestCase):
         # Use inputs from self.option
         S0 = self.option.S0
         K = self.option.K
-        T = self.option.T
+        T = torch.tensor(self.option.T, dtype=torch.float32, requires_grad=True)
         r = self.option.r
         sigma = self.option.sigma
 
@@ -35,7 +35,7 @@ class TestEuropeanOption(unittest.TestCase):
 
         payoffs = torch.maximum(paths[:, -1] - K, torch.tensor(0.0))  # Max(S_T - K, 0)
         # Convert r and T to tensors before using them in torch.exp
-        discount_factors = torch.exp(-torch.tensor(r, dtype=torch.float32) * torch.tensor(T, dtype=torch.float32))
+        discount_factors = torch.exp(-torch.tensor(r, dtype=torch.float32) * T)
         option_price = torch.mean(discount_factors * payoffs)
         print(f"Option price: {option_price.item():.5f}")                 
 

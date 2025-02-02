@@ -1,10 +1,8 @@
 import unittest
 import torch
 from Instruments.european_option import EuropeanOption
-
 from Engine.stochastic_process import LogNormalProcess
 from Methods.monte_carlo import MonteCarloMethod
-
 
 
 class TestEuropeanOption(unittest.TestCase):
@@ -19,39 +17,54 @@ class TestEuropeanOption(unittest.TestCase):
         self.assertEqual(self.option.sigma, 0.25)
 
     def test_pricing(self):
-        # Use inputs from self.option
-        S0 = torch.tensor(self.option.S0, dtype=torch.float32, requires_grad=True)
-        
+        """ Test European Option pricing using Monte Carlo simulation with gradient tracking """
+        # Convert option parameters to PyTorch tensors with requires_grad for differentiation
+        S0 = torch.tensor(self.option.S0, dtype=torch.float32, requires_grad=True)        
         K = self.option.K
-        T = self.option.T
-        r = self.option.r
-        sigma = torch.tensor(self.option.sigma, dtype=torch.float32, requires_grad=True)
+        T = torch.tensor(self.option.T, dtype=torch.float32, requires_grad=True)  # Time doesn't need gradients
+        r = torch.tensor(self.option.r, dtype=torch.float32, requires_grad=True)  # Risk-free rate is fixed
+        sigma = torch.tensor(self.option.sigma, dtype=torch.float32, requires_grad=True)  # Track volatility sensitivity
 
-        num_paths = 5000  # Number of Monte Carlo paths
+        num_paths = 50  # Number of Monte Carlo paths
         num_steps = 1000  # Number of time steps
 
         with torch.autograd.set_detect_anomaly(True):
-            process = LogNormalProcess(r, sigma.item())
-            mc = MonteCarloMethod(process, S0.item(), T, num_paths, num_steps)
+            # Ensure process parameters are differentiable
+            process = LogNormalProcess(r, sigma)
+            process.r = r
+            process.sigma = sigma
+
+            # Monte Carlo Simulation
+            mc = MonteCarloMethod(process, S0, T, num_paths, num_steps)
             paths = mc.simulate()
 
-            # Ensure paths require gradients
-            paths = paths.clone().detach().requires_grad_(True)
-            payoffs = torch.maximum(paths[:, -1] - K, torch.tensor(0.0))  # Max(S_T - K, 0)
+            # Compute Payoffs: European Call (max(S_T - K, 0))
+            payoffs = torch.maximum(paths[:, -1] - K, torch.tensor(0.0, dtype=torch.float32, device=paths.device))
             
-            # Convert r and T to tensors before using them in torch.exp
-            discount_factors = torch.exp(-torch.tensor(r, dtype=torch.float32) * torch.tensor(T, dtype=torch.float32))
-            option_price = torch.mean(discount_factors * payoffs)
+            # Compute discounted expected value (risk-neutral pricing)
+            discount_factor = torch.exp(-r * T)
+            option_price = torch.mean(discount_factor * payoffs)
+
             print(f"Option price: {option_price.item():.5f}")    
 
-            # Perform backpropagation to compute the gradient of option_price w.r.t. parameters
-            option_price.backward()
-            
-            # Extract the gradient (delta of CVA with respect to lambda_0)
-            delta = S0.grad.item()
+            # Perform backpropagation to compute option Greeks
+            option_price.backward(retain_graph=True)  # Ensures gradients are retained
 
-            print(f"Delta of option w.r.t S0: {delta:.5f}")
-             
+            # Extract Delta (dV/dS0) and Vega (dV/dσ)
+            delta = S0.grad.item()
+            vega = sigma.grad.item()
+
+            # Compute Rho (dV/dr) by taking the derivative with respect to r
+            rho = torch.autograd.grad(option_price, r, retain_graph=True)[0].item()
+
+            # Compute Theta (dV/dT) by taking the derivative with respect to T
+            theta = torch.autograd.grad(option_price, T, retain_graph=True)[0].item()
+
+            print(f"Delta (dV/dS0): {delta:.5f}")
+            print(f"Vega (dV/dσ): {vega:.5f}")
+            print(f"Rho (dV/dr): {rho:.5f}")
+            print(f"Theta (dV/dT): {theta:.5f}")
+
 
 if __name__ == '__main__':
     unittest.main()
