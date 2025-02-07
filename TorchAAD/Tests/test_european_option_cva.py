@@ -3,7 +3,6 @@ import torch
 from Instruments.european_option import EuropeanOption
 
 from Engine.stochastic_process import NormalProcess, LogNormalProcess
-#from Engine.simulator import simulate_process
 from Methods.monte_carlo import MonteCarloMethod
 
 class TestEuropeanOption(unittest.TestCase):
@@ -21,7 +20,8 @@ class TestEuropeanOption(unittest.TestCase):
         # Use inputs from self.option
         S0 = self.option.S0
         K = self.option.K
-        T = torch.tensor(self.option.T, dtype=torch.float32, requires_grad=True)  # Time doesn't need gradients
+        #T = torch.tensor(self.option.T, dtype=torch.float32, requires_grad=True)
+        T = self.option.T
         r = self.option.r
         sigma = self.option.sigma
 

@@ -1,6 +1,6 @@
 import unittest
 import torch
-from TorchAAD.Methods.longstaff_schwartz import LongstaffSchwartzMethod
+from Methods.longstaff_schwartz import LongstaffSchwartzMethod
 
 class MockInstrument:
     def __init__(self, name, S0, strike, maturity, rate, volatility):

@@ -21,7 +21,8 @@ class MonteCarloMethod(PricingMethod):
         self.T = T
         self.num_paths = num_paths
         self.num_steps = num_steps
-        #self.dt = torch.tensor(T, dtype=torch.float32) / num_steps
+        if not torch.is_tensor(T):
+            T = torch.tensor(T, dtype=torch.float32)
         self.dt = T / num_steps
 
     def simulate(self):
