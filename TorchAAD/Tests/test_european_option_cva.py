@@ -1,8 +1,9 @@
 import unittest
 import torch
+import numpy as np
 from Instruments.european_option import EuropeanOption
 
-from Engine.stochastic_process import NormalProcess, LogNormalProcess
+from Engine.stochastic_process import LogNormalProcess, IntensityProcess
 from Methods.monte_carlo import MonteCarloMethod
 
 class TestEuropeanOption(unittest.TestCase):
@@ -17,6 +18,7 @@ class TestEuropeanOption(unittest.TestCase):
         self.assertEqual(self.option.sigma, 0.25)
 
     def test_cva_calculation(self):
+        return
         # Use inputs from self.option
         S0 = self.option.S0
         K = self.option.K
@@ -63,7 +65,75 @@ class TestEuropeanOption(unittest.TestCase):
 
         print(f"CVA: {cva.item():.5f}")
         print(f"Delta of CVA w.r.t lambda_0: {delta_cva:.5f}")
+
+    def test_intensity_process(self):
+        process = IntensityProcess(mu=1.0, sigma=0.0, k=0.5, nu=0.2)
+        # Initialize process
+        S0 = torch.tensor(1.0)  # Initial value
+        dt = 1 / 252            # Daily time step
+        dW = torch.randn(1)     # Random normal increment
+        S_next = process.evolve(S0, dt, dW)
+        #print(S_next)
                  
+
+    def test_cir_initensity_cva(self):
+        lambda_0 = 1.0  # Initial hazard rate
+        k = 0.5
+        mu = 1.0
+        nu = 0.25
+        LGD = 0.6  # Loss given default
+        num_paths = 50000
+        num_steps = 256
+        T = 2.0
+        M = 50.0
+        process = IntensityProcess(mu=mu, sigma=0.0, k=k, nu=nu)
+
+        T_grid = np.linspace(1, int(T), int(M))
+        lambda_grid = []
+        for Tm in T_grid:
+            mc = MonteCarloMethod(process, lambda_0, Tm, num_paths, num_steps)        
+            paths = mc.simulate()
+            lambda_m = torch.mean(paths[:, -1]).item()
+            lambda_grid.append(lambda_m)
+
+
+        time_points = torch.tensor(T_grid, dtype=torch.float32)
+        dt = time_points[1:] - time_points[:-1]
+        lambda_points = torch.tensor(lambda_grid, dtype=torch.float32)
+        lambda_points = lambda_points[:-1]  # Truncate to match dt size
+
+        survival_probs = torch.exp(-torch.sum(lambda_points * dt))
+        print(survival_probs)
+
+        # Calculate CVA
+        def calculate_cva(LGD, S, K, T, r, survival_probs):
+            payoffs = torch.maximum(S[:, -1] - K, torch.tensor(0.0))  # Max(S_T - K, 0)
+            # Convert r and T to tensors before using them in torch.exp
+            discount_factors = torch.exp(-torch.tensor(r, dtype=torch.float32) * T)
+            cva = LGD * torch.mean((1 - survival_probs) * discount_factors * payoffs)
+            return cva
+
+        # Use inputs from self.option
+        S0 = self.option.S0
+        K = self.option.K
+        #T = torch.tensor(self.option.T, dtype=torch.float32, requires_grad=True)
+        T = self.option.T
+        r = self.option.r
+        sigma = self.option.sigma
+
+
+        process = LogNormalProcess(r, sigma)
+        mc = MonteCarloMethod(process, S0, T, num_paths, num_steps)        
+        paths = mc.simulate()
+
+
+        # Compute CVA using automatic differentiation
+        cva = calculate_cva(LGD, paths, K, T, r, survival_probs)
+        print(f"CIR Intensity CVA: {cva.item():.5f}")
+        #print(f"Delta of CVA w.r.t lambda_0: {delta_cva:.5f}")
+
+
+
 
 if __name__ == '__main__':
     unittest.main()

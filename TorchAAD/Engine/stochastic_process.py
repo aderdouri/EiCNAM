@@ -44,28 +44,42 @@ class NormalProcess(StochasticProcess):
         return S + self.mu * dt + self.sigma * dW
 
 class LogNormalProcess(StochasticProcess):
-    # def evolve(self, S: torch.Tensor, dt: float, dW: torch.Tensor) -> torch.Tensor:
-    #     """
-    #     Evolves the process using Geometric Brownian Motion (GBM) dynamics.
-        
-    #     Args:
-    #         S (torch.Tensor): Current value of the process.
-    #         dt (float): Time step.
-    #         dW (torch.Tensor): Brownian motion increment.
-
-    #     Returns:
-    #         torch.Tensor: Evolved process value.
-    #     """
-    #     return S * torch.exp((self.mu - 0.5 * self.sigma**2) * dt + self.sigma * dW)
-
-
     def evolve(self, S: torch.Tensor, dt: float, dW: torch.Tensor) -> torch.Tensor:
         """
         Evolves the stochastic process using the given S, time step dt, and Brownian motion dW.
         Ensures `mu` and `sigma` are tensors with `requires_grad=True` for gradient tracking.
         """
-        #mu = torch.tensor(self.mu, dtype=torch.float32, device=S.device, requires_grad=True)
-        #sigma = torch.tensor(self.sigma, dtype=torch.float32, device=S.device, requires_grad=True)
-
         return S * torch.exp((self.mu - 0.5 * self.sigma**2) * dt + self.sigma * dW)
 
+class IntensityProcess(StochasticProcess):
+    def __init__(self, mu: float, sigma: float, k: float, nu: float, device="cpu"):
+        """
+        Mean-Reverting Stochastic Process.
+        
+        Args:
+            mu (float): Mean-reversion level.
+            sigma (float): Initial volatility coefficient (unused in this process, for compatibility).
+            k (float): Speed of mean reversion.
+            nu (float): Volatility scaling factor.
+            device (str): Device to perform computations ('cpu' or 'cuda').
+        """
+        super().__init__(mu, sigma, device)
+        self.k = torch.tensor(k, dtype=torch.float32, device=self.device)
+        self.nu = torch.tensor(nu, dtype=torch.float32, device=self.device)
+
+    def evolve(self, S: torch.Tensor, dt: float, dW: torch.Tensor) -> torch.Tensor:
+        """
+        Evolves the process using the given dynamics.
+        
+        Args:
+            S (torch.Tensor): Current value of the process.
+            dt (float): Time step (h).
+            dW (torch.Tensor): Standard normal random variable (Z_i).
+        
+        Returns:
+            torch.Tensor: Evolved process value.
+        """
+        dt = torch.tensor(dt, dtype=torch.float32, device=S.device)
+        drift = self.k * (self.mu - S) * dt
+        diffusion = self.nu * torch.sqrt(S) * torch.sqrt(dt) * dW
+        return S + drift + diffusion
