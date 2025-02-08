@@ -64,8 +64,8 @@ class IntensityProcess(StochasticProcess):
             device (str): Device to perform computations ('cpu' or 'cuda').
         """
         super().__init__(mu, sigma, device)
-        self.k = torch.tensor(k, dtype=torch.float32, device=self.device)
-        self.nu = torch.tensor(nu, dtype=torch.float32, device=self.device)
+        self.k = k #torch.tensor(k, dtype=torch.float32, device=self.device)
+        self.nu = nu #torch.tensor(nu, dtype=torch.float32, device=self.device)
 
     def evolve(self, S: torch.Tensor, dt: float, dW: torch.Tensor) -> torch.Tensor:
         """
@@ -79,7 +79,6 @@ class IntensityProcess(StochasticProcess):
         Returns:
             torch.Tensor: Evolved process value.
         """
-        dt = torch.tensor(dt, dtype=torch.float32, device=S.device)
         drift = self.k * (self.mu - S) * dt
         diffusion = self.nu * torch.sqrt(S) * torch.sqrt(dt) * dW
         return S + drift + diffusion

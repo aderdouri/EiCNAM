@@ -61,14 +61,15 @@ class TestEuropeanOption(unittest.TestCase):
         numerator_B = 2 * h * (torch.exp(h * T) - 1)
         denominator_B = 2 * h + (k + h) * (torch.exp(h * T) - 1)
         B_0_T = numerator_B / denominator_B
-
+        survival_probs = A_0_T * torch.exp(-lambda0 * B_0_T)
         # Print results
         print(f"h: {h.item()}")
         print(f"A(0, T): {A_0_T.item()}")
         print(f"B(0, T): {B_0_T.item()}")
+        print(f"survival_probs: {survival_probs.item()}")
+        print(f"option_price: {option_price.item()}")
 
-        CVA = LGD * (1 - A_0_T * torch.exp(-lambda0 * B_0_T)) * option_price    
-
+        CVA = LGD * (1 - survival_probs) * option_price    
         print(f"CVA: {CVA.item()}")
 
         # Compute CVA sensitivity with respect to λ0
