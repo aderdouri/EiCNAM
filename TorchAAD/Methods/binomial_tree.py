@@ -1,5 +1,5 @@
 import torch
-from TorchAAD.Methods.base import PricingMethod
+from Methods.base import PricingMethod
 
 class BinomialTreeMethod(PricingMethod):
     def __init__(self, num_steps, exercise_times=None):

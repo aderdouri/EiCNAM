@@ -2,13 +2,13 @@ import torch
 from Methods.base import PricingMethod
 
 class LongstaffSchwartzMethodBestOf2Assets(PricingMethod):
-    def __init__(self, num_paths, num_steps):
+    def __init__(self, num_paths=500000, num_steps=1000):
         self.num_paths = num_paths
         self.num_steps = num_steps
 
-    def price(self, S0_1, S0_2, K, sigma1, sigma2, T, r, M=12):
+    def price(self, S0_1, S0_2, K, sigma1, sigma2, T, r, M=12, option_type='put'):
         """
-        Price the best of two put options using the Longstaff-Schwartz algorithm.
+        Price the best of two options using the Longstaff-Schwartz algorithm.
 
         Args:
             S0_1: Initial price of the first asset.
@@ -19,6 +19,7 @@ class LongstaffSchwartzMethodBestOf2Assets(PricingMethod):
             T: Time to maturity.
             r: Risk-free rate.
             M: Exercise frequency.
+            option_type: 'put' or 'call'.
 
         Returns:
             V: Option value.
@@ -43,13 +44,19 @@ class LongstaffSchwartzMethodBestOf2Assets(PricingMethod):
             Sp2[:, t] = previous_step2 * torch.exp((r - 0.5 * sigma2**2) * dt + sigma2 * sqrt_dt * Z2[:, t])
 
         # Initialize cash flows
-        cash_flow = torch.maximum(K - torch.minimum(Sp1[:, -1], Sp2[:, -1]), torch.tensor(0.0, dtype=torch.float32))
+        if option_type == 'put':
+            cash_flow = torch.maximum(K - torch.minimum(Sp1[:, -1], Sp2[:, -1]), torch.tensor(0.0, dtype=torch.float32))
+        elif option_type == 'call':
+            cash_flow = torch.maximum(torch.minimum(Sp1[:, -1], Sp2[:, -1]) - K, torch.tensor(0.0, dtype=torch.float32))
+        else:
+            raise ValueError("option_type must be 'put' or 'call'")
+
         discount_factor = torch.exp(-r * dt)
 
         # Backward induction
         cash_flow = cash_flow.clone()
         for t in range(NT - 2, 0, -M):
-            in_the_money = torch.minimum(Sp1[:, t], Sp2[:, t]) < K
+            in_the_money = torch.minimum(Sp1[:, t], Sp2[:, t]) < K if option_type == 'put' else torch.minimum(Sp1[:, t], Sp2[:, t]) > K
             itm_indices = torch.where(in_the_money)[0]
 
             if len(itm_indices) > 0:
@@ -57,13 +64,16 @@ class LongstaffSchwartzMethodBestOf2Assets(PricingMethod):
                 X2 = Sp2[itm_indices, t]
                 Y = cash_flow[itm_indices] * discount_factor.clone()
 
-                # Regression to approximate continuation value
-                A = torch.stack([torch.ones_like(X1), X1, X1**2, X2, X2**2], dim=1)
+                # Updated polynomial basis function
+                A = torch.stack([torch.ones_like(X1), X1, X2, X1 * X2, X1**2, X2**2, X1**3, X2**3, X1 * X2**2, X2 * X1**2], dim=1)
                 coeffs = torch.linalg.lstsq(A, Y).solution
 
-                continuation_value = coeffs[0] + coeffs[1] * X1 + coeffs[2] * X1**2 + coeffs[3] * X2 + coeffs[4] * X2**2
+                continuation_value = coeffs[0] + coeffs[1] * X1 + coeffs[2] * X2 + coeffs[3] * X1 * X2 + coeffs[4] * X1**2 + coeffs[5] * X2**2 + coeffs[6] * X1**3 + coeffs[7] * X2**3 + coeffs[8] * X1 * X2**2 + coeffs[9] * X2 * X1**2
 
-                exercise_value = K - torch.minimum(X1, X2)
+                if option_type == 'put':
+                    exercise_value = K - torch.minimum(X1, X2)
+                else:
+                    exercise_value = torch.minimum(X1, X2) - K
 
                 exercise = exercise_value > continuation_value
                 exercise_indices = itm_indices[exercise]
@@ -75,6 +85,7 @@ class LongstaffSchwartzMethodBestOf2Assets(PricingMethod):
 
         # Final option value
         V = cash_flow.mean() * torch.exp(-r * dt)
+        print(f"Longstaff-Schwartz price for Best of Two {option_type} Option: {V.item()}")
         return V
 
     def calculate_greeks(self, S0_1, S0_2, K, sigma1, sigma2, T, r, M=12):

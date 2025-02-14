@@ -27,17 +27,12 @@ class TestLongstaffSchwartzMethodBestOf2Assets(unittest.TestCase):
             volatility1=0.40,
             volatility2=0.40
         )
-        method = LongstaffSchwartzMethodBestOf2Assets(num_paths=1000, num_steps=50)
-        price = method.price(instrument.S0_1, instrument.S0_2, instrument.strike, 
-                                             instrument.volatility1, instrument.volatility2, 
-                                             instrument.maturity, instrument.rate)
-        
+        method = LongstaffSchwartzMethodBestOf2Assets(num_paths=50000, num_steps=365)        
         greeks = method.calculate_greeks(instrument.S0_1, instrument.S0_2, instrument.strike,
                                          instrument.volatility1, instrument.volatility2, 
-                                         instrument.maturity, instrument.rate)
+                                         instrument.maturity, instrument.rate, M=100)
         
         self.assertIsInstance(greeks, dict)
-        print(f"Price for Bermudan Option: {price.item()}")
         print(f"Greeks for Bermudan Option: {json.dumps(greeks, indent=4)}")
 
 
@@ -53,17 +48,12 @@ class TestLongstaffSchwartzMethodBestOf2Assets(unittest.TestCase):
             volatility1=0.20,
             volatility2=0.20
         )
-        method = LongstaffSchwartzMethodBestOf2Assets(num_paths=1000, num_steps=12)
-        price = method.price(instrument.S0_1, instrument.S0_2, instrument.strike, 
-                                             instrument.volatility1, instrument.volatility2, 
-                                             instrument.maturity, instrument.rate)
-
+        method = LongstaffSchwartzMethodBestOf2Assets(num_paths=50000, num_steps=365)
         greeks = method.calculate_greeks(instrument.S0_1, instrument.S0_2, instrument.strike,
                                          instrument.volatility1, instrument.volatility2, 
-                                         instrument.maturity, instrument.rate)
+                                         instrument.maturity, instrument.rate, M=100)
         
         self.assertIsInstance(greeks, dict)
-        print(f"Price for Bermudan Option: {price.item()}")
         print(f"Greeks for Bermudan Option: {json.dumps(greeks, indent=4)}")
 
 if __name__ == '__main__':

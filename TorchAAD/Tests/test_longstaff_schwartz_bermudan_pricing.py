@@ -21,9 +21,9 @@ class TestLongstaffSchwartzMethod(unittest.TestCase):
             rate=0.05,
             volatility=0.25
         )
-        method = LongstaffSchwartzMethod(num_paths=1000, num_steps=50)
+        method = LongstaffSchwartzMethod(num_paths=500000, num_steps=1800)
         price = method.price(instrument.S0, instrument.strike, 
-                             instrument.volatility, instrument.maturity, instrument.rate)
+                             instrument.volatility, instrument.maturity, instrument.rate, M=900)
         
         self.assertIsInstance(price, torch.Tensor)
         self.assertGreater(price.item(), 0)
@@ -38,9 +38,9 @@ class TestLongstaffSchwartzMethod(unittest.TestCase):
             rate=0.15,
             volatility=0.2
         )
-        method = LongstaffSchwartzMethod(num_paths=500000, num_steps=1000)
+        method = LongstaffSchwartzMethod(num_paths=500000, num_steps=360)
         price = method.price(instrument.S0, instrument.strike, 
-                             instrument.volatility, instrument.maturity, instrument.rate)
+                             instrument.volatility, instrument.maturity, instrument.rate, M=30)
         
         self.assertIsInstance(price, torch.Tensor)
         self.assertGreater(price.item(), 0)
@@ -55,9 +55,9 @@ class TestLongstaffSchwartzMethod(unittest.TestCase):
             rate=0.15,
             volatility=0.2
         )
-        method = LongstaffSchwartzMethod(num_paths=500000, num_steps=1000)
+        method = LongstaffSchwartzMethod(num_paths=500000, num_steps=360)
         price = method.price(instrument.S0, instrument.strike, 
-                             instrument.volatility, instrument.maturity, instrument.rate)
+                             instrument.volatility, instrument.maturity, instrument.rate, M=30)
         
         self.assertIsInstance(price, torch.Tensor)
         self.assertGreater(price.item(), 0)
@@ -72,9 +72,9 @@ class TestLongstaffSchwartzMethod(unittest.TestCase):
             rate=0.15,
             volatility=0.2
         )
-        method = LongstaffSchwartzMethod(num_paths=500000, num_steps=1000)
+        method = LongstaffSchwartzMethod(num_paths=500000, num_steps=360)
         price = method.price(instrument.S0, instrument.strike, 
-                             instrument.volatility, instrument.maturity, instrument.rate)
+                             instrument.volatility, instrument.maturity, instrument.rate, M=30)
         
         self.assertIsInstance(price, torch.Tensor)
         self.assertGreater(price.item(), 0)

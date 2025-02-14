@@ -22,15 +22,16 @@ class TestEuropeanOption(unittest.TestCase):
         lambdas_paths = mc.simulate()
 
         dt_step = T / num_steps
-        integrated_intensity = torch.sum(lambdas_paths.T[:, :-1] * dt_step, dim=1)  
+        integrated_intensity = torch.sum(lambdas_paths[:, :-1] * dt_step, dim=1)  
+        print(f"Average integrated intensity: {torch.mean(integrated_intensity).item():.4f}")
         
         survival_probs = torch.exp(-integrated_intensity).mean()
-        #print(f"Average survival probability: {survival_probs.item():.4f}")
+        print(f"Average survival probability: {survival_probs.item():.4f}")
 
         payoffs = torch.maximum(S[:, -1] - K, torch.tensor(0.0))
         discount_factors = torch.exp(-torch.tensor(r, dtype=torch.float32) * T)
         option_price = torch.mean(discount_factors * payoffs)
-        #print(f"option_price: {option_price.item()}")
+        print(f"option_price: {option_price.item()}")
         cva = LGD * torch.mean((1 - survival_probs) * discount_factors * payoffs)
         return cva
 

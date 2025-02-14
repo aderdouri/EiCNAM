@@ -1,6 +1,6 @@
 import unittest
 import torch
-from TorchAAD.Methods.binomial_tree import BinomialTreeMethod
+from Methods.binomial_tree import BinomialTreeMethod
 
 class MockInstrument:
     def __init__(self, name, S0, strike, maturity, rate, volatility):
