@@ -30,11 +30,17 @@ set(SOURCE_FILES_CPPUNITTEST
 )
 
 set(SOURCE_FILES_EXAMPLE_AAD
-    tests/test_torchCppExample.cpp
+    tests/testTorchCppExample.cpp
 )
 
 set(SOURCE_FILES_OPTION_PRICING_BS
-    tests/test_BlackScholesClosedForm.cpp
+    tests/testBlackScholesClosedForm.cpp
+)
+
+set(SOURCE_FILES_OPTION_PRICING_MC
+    include/methods/MonteCarlo.hpp
+    src/methods/MonteCarlo.cpp
+    tests/testMonteCarloEuropeanOption.cpp
 )
 
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
@@ -47,5 +53,9 @@ target_link_libraries(torchCppExample "${TORCH_LIBRARIES}")
 
 add_executable(blackScholesClosedForm ${SOURCE_FILES_OPTION_PRICING_BS})
 target_link_libraries(blackScholesClosedForm "${TORCH_LIBRARIES}")
+
+add_executable(monteCarloEuropeanOption ${SOURCE_FILES_OPTION_PRICING_MC})
+target_link_libraries(monteCarloEuropeanOption "${TORCH_LIBRARIES}")
+
 
 #set_property(TARGET torchCppExample PROPERTY CXX_STANDARD 17)
