@@ -57,5 +57,4 @@ target_link_libraries(blackScholesClosedForm "${TORCH_LIBRARIES}")
 add_executable(monteCarloEuropeanOption ${SOURCE_FILES_OPTION_PRICING_MC})
 target_link_libraries(monteCarloEuropeanOption "${TORCH_LIBRARIES}")
 
-
 #set_property(TARGET torchCppExample PROPERTY CXX_STANDARD 17)
