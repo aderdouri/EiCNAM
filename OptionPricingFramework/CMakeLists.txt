@@ -43,9 +43,29 @@ set(SOURCE_FILES_OPTION_PRICING_MC
     tests/testMonteCarloEuropeanOption.cpp
 )
 
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+set(SOURCE_FILES_EIGEN_CPP
+    tests/testEigenCppExample.cpp
+)
 
+# Set the paths to the third-party libraries
+set(THIRD_PARTY_LIBS_DIR /Users/aderdouri/Downloads/ThirdPartyLibs)
+
+# Include Eigen3
+set(EIGEN3_INCLUDE_DIR ${THIRD_PARTY_LIBS_DIR}/eigen-3.4.0)
+include_directories(${EIGEN3_INCLUDE_DIR})
+
+# Include libtorch
+set(Torch_DIR ${THIRD_PARTY_LIBS_DIR}/libtorch/share/cmake/Torch)
 find_package(Torch REQUIRED)
+
+# Exclude libkineto.a from linking
+list(REMOVE_ITEM TORCH_LIBRARIES "${THIRD_PARTY_LIBS_DIR}/libtorch/lib/libkineto.a")
+
+# Print the paths of Eigen3 and Torch
+message(STATUS "Eigen3 include directory: ${EIGEN3_INCLUDE_DIR}")
+message(STATUS "Torch include directory: ${TORCH_INCLUDE_DIRS}")
+message(STATUS "Torch library directory: ${TORCH_LIBRARIES}")
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
 add_executable(torchCppExample ${SOURCE_FILES_EXAMPLE_AAD})
@@ -57,4 +77,6 @@ target_link_libraries(blackScholesClosedForm "${TORCH_LIBRARIES}")
 add_executable(monteCarloEuropeanOption ${SOURCE_FILES_OPTION_PRICING_MC})
 target_link_libraries(monteCarloEuropeanOption "${TORCH_LIBRARIES}")
 
-#set_property(TARGET torchCppExample PROPERTY CXX_STANDARD 17)
+add_executable(eigenCppExample ${SOURCE_FILES_EIGEN_CPP})
+target_include_directories(eigenCppExample PRIVATE ${EIGEN3_INCLUDE_DIR})
+

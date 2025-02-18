@@ -1,13 +1,25 @@
 cmake_minimum_required(VERSION 3.26 FATAL_ERROR)
 project(addCpp)
 
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+# Set the paths to the third-party libraries
+set(THIRD_PARTY_LIBS_DIR /Users/aderdouri/Downloads/ThirdPartyLibs)
+
+# Include Eigen3
+set(EIGEN3_INCLUDE_DIR ${THIRD_PARTY_LIBS_DIR}/eigen-3.4.0)
+include_directories(${EIGEN3_INCLUDE_DIR})
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+
+# Include libtorch
+set(Torch_DIR ${THIRD_PARTY_LIBS_DIR}/libtorch/share/cmake/Torch)
+find_package(Torch REQUIRED)
+
+# Exclude libkineto.a from linking
+list(REMOVE_ITEM TORCH_LIBRARIES "${THIRD_PARTY_LIBS_DIR}/libtorch/lib/libkineto.a")
 
 # Set the C++ standard
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-
 
 # Set the build type to Debug
 set(CMAKE_BUILD_TYPE Debug)
@@ -15,11 +27,6 @@ set(CMAKE_BUILD_TYPE Debug)
 # Ensure debug symbols are included
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 
-# Compiler flags
-#set(CMAKE_CXX_FLAGS_DEBUG "-Wall -O0")
-#set(CMAKE_CXX_FLAGS_RELEASE "-Wall -O2")
-
-# Clang-specific flags
 # Suppress specific warnings
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
 
@@ -196,7 +203,6 @@ set(SOURCE_FILES_COMPFINANCE_ALL
 
 add_executable (compFinanceTest ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_COMPFINANCE_ALL})
 
-find_package(Torch REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
 add_executable(torchCppExample CompFinanceTests/TorchCppExampleTest.cpp)
