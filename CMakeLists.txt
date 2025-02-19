@@ -1,20 +1,5 @@
 cmake_minimum_required(VERSION 3.26 FATAL_ERROR)
-project(addCpp)
-
-# Set the paths to the third-party libraries
-set(THIRD_PARTY_LIBS_DIR /Users/aderdouri/Downloads/ThirdPartyLibs)
-
-# Include Eigen3
-set(EIGEN3_INCLUDE_DIR ${THIRD_PARTY_LIBS_DIR}/eigen-3.4.0)
-include_directories(${EIGEN3_INCLUDE_DIR})
-find_package(Eigen3 3.3 REQUIRED NO_MODULE)
-
-# Include libtorch
-set(Torch_DIR ${THIRD_PARTY_LIBS_DIR}/libtorch/share/cmake/Torch)
-find_package(Torch REQUIRED)
-
-# Exclude libkineto.a from linking
-list(REMOVE_ITEM TORCH_LIBRARIES "${THIRD_PARTY_LIBS_DIR}/libtorch/lib/libkineto.a")
+project(PyTorchCpp)
 
 # Set the C++ standard
 set(CMAKE_CXX_STANDARD 23)
@@ -203,8 +188,57 @@ set(SOURCE_FILES_COMPFINANCE_ALL
 
 add_executable (compFinanceTest ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_COMPFINANCE_ALL})
 
+
+set(SOURCE_FILES_EXAMPLE_AAD
+    OptionPricingFramework/tests/testTorchCppExample.cpp
+)
+
+set(SOURCE_FILES_OPTION_PRICING_BS
+    OptionPricingFramework/tests/testBlackScholesClosedForm.cpp
+)
+
+set(SOURCE_FILES_OPTION_PRICING_MC
+    OptionPricingFramework/include/methods/MonteCarlo.hpp
+    OptionPricingFramework/src/methods/MonteCarlo.cpp
+    OptionPricingFramework/tests/testMonteCarloEuropeanOption.cpp
+)
+
+set(SOURCE_FILES_EIGEN_CPP
+    OptionPricingFramework/tests/testEigenCppExample.cpp
+)
+
+# Set the paths to the third-party libraries
+set(THIRD_PARTY_LIBS_DIR /Users/aderdouri/Downloads/ThirdPartyLibs)
+
+# Include Eigen3
+set(EIGEN3_INCLUDE_DIR ${THIRD_PARTY_LIBS_DIR}/eigen-3.4.0)
+include_directories(${EIGEN3_INCLUDE_DIR})
+
+# Include libtorch
+set(Torch_DIR ${THIRD_PARTY_LIBS_DIR}/libtorch/share/cmake/Torch)
+find_package(Torch REQUIRED)
+
+# Exclude libkineto.a from linking
+list(REMOVE_ITEM TORCH_LIBRARIES "${THIRD_PARTY_LIBS_DIR}/libtorch/lib/libkineto.a")
+
+# Print the paths of Eigen3 and Torch
+message(STATUS "Eigen3 include directory: ${EIGEN3_INCLUDE_DIR}")
+message(STATUS "Torch include directory: ${TORCH_INCLUDE_DIRS}")
+message(STATUS "Torch library directory: ${TORCH_LIBRARIES}")
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
-add_executable(torchCppExample CompFinanceTests/TorchCppExampleTest.cpp)
+add_executable(torchCppExample ${SOURCE_FILES_EXAMPLE_AAD})
 target_link_libraries(torchCppExample "${TORCH_LIBRARIES}")
-set_property(TARGET torchCppExample PROPERTY CXX_STANDARD 17)
+
+add_executable(blackScholesClosedForm ${SOURCE_FILES_OPTION_PRICING_BS})
+target_link_libraries(blackScholesClosedForm "${TORCH_LIBRARIES}")
+
+add_executable(monteCarloEuropeanOption ${SOURCE_FILES_OPTION_PRICING_MC})
+target_link_libraries(monteCarloEuropeanOption "${TORCH_LIBRARIES}")
+
+add_executable(eigenCppExample ${SOURCE_FILES_EIGEN_CPP})
+target_include_directories(eigenCppExample PRIVATE ${EIGEN3_INCLUDE_DIR})
+
+
+
