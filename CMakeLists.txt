@@ -208,7 +208,7 @@ set(SOURCE_FILES_EIGEN_CPP
 )
 
 # Set the paths to the third-party libraries
-set(THIRD_PARTY_LIBS_DIR /Users/aderdouri/Downloads/ThirdPartyLibs)
+set(THIRD_PARTY_LIBS_DIR $ENV{HOME}/Downloads/ThirdPartyLibs)
 
 # Include Eigen3
 set(EIGEN3_INCLUDE_DIR ${THIRD_PARTY_LIBS_DIR}/eigen-3.4.0)
