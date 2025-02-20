@@ -109,13 +109,13 @@ set(SOURCE_FILES_SABR_PRICE_FORMULA
 #add_executable(monteCarloSimulation ${SOURCE_FILES_MONTE_CARLO})
 
 
-set(SOURCE_FILES_BASIC_INSTRUMENTATION 
-    Tutorials/tests/BasicInstrumentationTest.cpp
-)
+# set(SOURCE_FILES_BASIC_INSTRUMENTATION 
+#     Tutorials/tests/BasicInstrumentationTest.cpp
+# )
 
-set(SOURCE_FILES_BASIC_INSTRUMENTATION_EXPR 
-    Tutorials/tests/BasicInstrumentationExprTest.cpp
-)
+# set(SOURCE_FILES_BASIC_INSTRUMENTATION_EXPR 
+#     Tutorials/tests/BasicInstrumentationExprTest.cpp
+# )
 
 #add_executable (autoDiff ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_COMPFINANCE_AAD} ${SOURCE_FILES_BASIC_INSTRUMENTATION})
 #target_compile_definitions(autoDiff PRIVATE AADET=0)
@@ -124,11 +124,11 @@ set(SOURCE_FILES_BASIC_INSTRUMENTATION_EXPR
 #target_compile_definitions(autoDiffExpr PRIVATE AADET=1)
 
 
-set(SOURCE_FILES_DOC_UWE 
-    dcoUwe/dco_a1s/dco_a1s_type.hpp
-    dcoUwe/dco_a1s/dco_a1s_type.cpp
-    dcoUwe/dco_a1s/main.cpp
-)
+# set(SOURCE_FILES_DOC_UWE 
+#     dcoUwe/dco_a1s/dco_a1s_type.hpp
+#     dcoUwe/dco_a1s/dco_a1s_type.cpp
+#     dcoUwe/dco_a1s/main.cpp
+# )
 
 #add_executable (dcoUwe ${SOURCE_FILES_DOC_UWE})
 
@@ -139,7 +139,7 @@ set(SOURCE_FILES_DOC_UWE
 #target_link_libraries(matrixExponential Eigen3::Eigen)
 
 
-add_executable(mdspan Tutorials/src/mdspan.cpp)
+#add_executable(mdspan Tutorials/src/mdspan.cpp)
 
 
 set(SOURCE_FILES_COMPFINANCE_ALL
@@ -186,7 +186,7 @@ set(SOURCE_FILES_COMPFINANCE_ALL
     CompFinanceTests/DupireMonteCarloFDM.cpp
 )
 
-add_executable (compFinanceTest ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_COMPFINANCE_ALL})
+#add_executable (compFinanceTest ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_COMPFINANCE_ALL})
 
 
 set(SOURCE_FILES_EXAMPLE_AAD
@@ -205,6 +205,19 @@ set(SOURCE_FILES_OPTION_PRICING_MC
 
 set(SOURCE_FILES_EIGEN_CPP
     OptionPricingFramework/tests/testEigenCppExample.cpp
+)
+
+set(SOURCE_FILES_LOG_NORMAL_PROCESS_TEST
+    OptionPricingFramework/include/Processes/StochasticProcess.hpp
+    OptionPricingFramework/include/Processes/LogNormalProcess.hpp
+    OptionPricingFramework/src/Processes/LogNormalProcess.cpp
+    OptionPricingFramework/tests/testLogNormalProcess.cpp
+)
+
+set(SOURCE_FILES_LONGSTAFF_SCHWARTZ
+    OptionPricingFramework/include/Methods/LongstaffSchwartz.hpp
+    OptionPricingFramework/src/Methods/LongstaffSchwartz.cpp
+    OptionPricingFramework/tests/testLongstaffSchwartz.cpp
 )
 
 # Set the paths to the third-party libraries
@@ -240,5 +253,11 @@ target_link_libraries(monteCarloEuropeanOption "${TORCH_LIBRARIES}")
 add_executable(eigenCppExample ${SOURCE_FILES_EIGEN_CPP})
 target_include_directories(eigenCppExample PRIVATE ${EIGEN3_INCLUDE_DIR})
 
+add_executable(testLogNormalProcess ${SOURCE_FILES_LOG_NORMAL_PROCESS_TEST})
+target_link_libraries(testLogNormalProcess "${TORCH_LIBRARIES}")
 
+add_executable(testLinAL OptionPricingFramework/tests/testLinAL.cpp)
+target_link_libraries(testLinAL "${TORCH_LIBRARIES}")
 
+add_executable(testLongstaffSchwartz ${SOURCE_FILES_LONGSTAFF_SCHWARTZ})
+target_link_libraries(testLongstaffSchwartz "${TORCH_LIBRARIES}")
