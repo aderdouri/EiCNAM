@@ -16,8 +16,9 @@ torch::Tensor LongstaffSchwartz::simulatePaths()
     for (int t = 1; t <= num_steps; ++t)
     {
         torch::Tensor Z = torch::randn({num_paths}, torch::dtype(torch::kDouble));
-        paths.index_put_({torch::indexing::Slice(), t},
-                         paths.index({torch::indexing::Slice(), t - 1}) * torch::exp((r - 0.5 * sigma * sigma) * dt + sigma * torch::sqrt(dt) * Z));
+        torch::Tensor St_minus_1 = paths.index({torch::indexing::Slice(), t - 1});
+        torch::Tensor St = St_minus_1 * torch::exp((r - 0.5 * sigma * sigma) * dt + sigma * torch::sqrt(dt) * Z);
+        paths = torch::cat({paths.index({torch::indexing::Slice(), torch::indexing::Slice(0, t)}), St.unsqueeze(1)}, 1);
     }
 
     return paths;

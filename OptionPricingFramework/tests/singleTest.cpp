@@ -13,7 +13,7 @@ torch::Tensor r = torch::tensor(0.05, torch::dtype(torch::kFloat32).requires_gra
 torch::Tensor sigma = torch::tensor(0.2, torch::dtype(torch::kFloat32).requires_grad(true));
 double K = 100.0;
 const int N = 50;
-const int M = 100;
+const int M = 500000;
 torch::Tensor T = torch::tensor(1.0, torch::dtype(torch::kFloat32).requires_grad(true));
 const int exercise_dates = 10;
 
@@ -81,7 +81,7 @@ int main()
     Tensor paths = generate_paths(S0, r, sigma, N, M, T);
     Tensor price = longstaff_schwartz(paths, S0, K, r, T, N);
 
-    // Compute first-order gradients (Delta, Rho, Vega, Theta)
+    // Compute first-order gradients (Delta, Rho, Vega, Theta) with create_graph = true
     auto grads = torch::autograd::grad({price}, {S0, r, sigma, T}, /*grad_outputs=*/{torch::ones_like(price)}, /*retain_graph=*/true, /*create_graph=*/true);
 
     auto delta = grads[0];
