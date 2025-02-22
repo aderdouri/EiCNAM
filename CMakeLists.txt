@@ -261,3 +261,7 @@ target_link_libraries(testLinAL "${TORCH_LIBRARIES}")
 
 add_executable(testLongstaffSchwartz ${SOURCE_FILES_LONGSTAFF_SCHWARTZ})
 target_link_libraries(testLongstaffSchwartz "${TORCH_LIBRARIES}")
+
+
+add_executable(singleTest OptionPricingFramework/tests/singleTest.cpp)
+target_link_libraries(singleTest "${TORCH_LIBRARIES}")
