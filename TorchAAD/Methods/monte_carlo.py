@@ -48,19 +48,3 @@ class MonteCarloMethod(PricingMethod):
                 S[:, t] = self.process.evolve(S_prev, self.dt, dW[:, t - 1], current_time)  # Pass current time
 
         return S
-
-# def simulate_cir_plus_plus(T, n_simulations, n_steps, k, mu, nu, x0, phi):
-#     dt = T / n_steps
-#     time_grid = torch.linspace(0, T, n_steps + 1)
-#     x = torch.zeros((n_simulations, n_steps + 1))
-#     x[:, 0] = x0
-#     Z = torch.randn((n_simulations, n_steps))
-
-#     for t in range(1, n_steps + 1):
-#         x_t = torch.relu(x[:, t-1])  # Ensure positivity
-#         drift = k * (mu - x_t) * dt
-#         diffusion = nu * torch.sqrt(x_t) * torch.sqrt(torch.tensor(dt)) * Z[:, t-1]
-#         x[:, t] = x_t + drift + diffusion
-
-#     lambda_t = x + phi(time_grid)  # Add deterministic shift
-#     return lambda_t, time_grid

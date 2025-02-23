@@ -59,4 +59,4 @@ torch::Tensor LongstaffSchwartz::price(const torch::Tensor &paths)
 
     torch::Tensor price = torch::mean(values * torch::exp(-r * dt));
     return price;
-}
+};

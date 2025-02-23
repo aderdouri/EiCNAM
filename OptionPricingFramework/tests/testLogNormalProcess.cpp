@@ -30,7 +30,7 @@ int main()
     torch::Tensor call_option_price = torch::exp(-r * T) * average_payoff;
 
     // Compute first-order gradients (Delta, Rho, Vega, Theta)
-    auto grads = torch::autograd::grad({call_option_price}, {S0, r, sigma, T}, /*grad_outputs=*/{}, /*retain_graph=*/true, /*create_graph=*/true);
+    auto grads = torch::autograd::grad({call_option_price}, {S0, r, sigma, T}, /*grad_outputs=*/{torch::ones_like(call_option_price)}, /*retain_graph=*/true, /*create_graph=*/true);
 
     auto delta = grads[0];
     auto rho = grads[1];
@@ -41,7 +41,7 @@ int main()
     std::cout << "Delta (dPrice/dS): " << delta.item<double>() << std::endl;
     std::cout << "Rho (dPrice/dr): " << rho.item<double>() << std::endl;
     std::cout << "Vega (dPrice/dSigma): " << vega.item<double>() << std::endl;
-    std::cout << "Theta (dPrice/dT): " << theta.item<double>() << std::endl;
+    std::cout << "Theta (dPrice/dT): " << -theta.item<double>() << std::endl; // Apply the sign convention here
 
     // Compute Gamma (second derivative with respect to S)
     auto gamma = torch::autograd::grad({delta}, {S0}, /*grad_outputs=*/{}, /*retain_graph=*/false, /*create_graph=*/false)[0];
@@ -50,3 +50,10 @@ int main()
 
     return 0;
 }
+
+// Call Option Price: 10.4506
+// Delta ClosedForm (dPrice/dS): 0.636831
+// Rho ClosedForm (dPrice/dr): 53.2325
+// Vega ClosedForm (dPrice/dSigma): 37.524
+// Theta ClosedForm (dPrice/dT): -6.41403
+// Gamma ClosedForm (d2Price/dS2): 0.018762

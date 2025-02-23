@@ -15,6 +15,27 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g")
 # Suppress specific warnings
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
 
+# Set the paths to the third-party libraries
+set(THIRD_PARTY_LIBS_DIR $ENV{HOME}/Downloads/ThirdPartyLibs)
+
+# Include Eigen3
+set(EIGEN3_INCLUDE_DIR ${THIRD_PARTY_LIBS_DIR}/eigen-3.4.0)
+include_directories(${EIGEN3_INCLUDE_DIR})
+
+# Include libtorch
+set(Torch_DIR ${THIRD_PARTY_LIBS_DIR}/libtorch/share/cmake/Torch)
+find_package(Torch REQUIRED)
+
+# Exclude libkineto.a from linking
+list(REMOVE_ITEM TORCH_LIBRARIES "${THIRD_PARTY_LIBS_DIR}/libtorch/lib/libkineto.a")
+
+# Print the paths of Eigen3 and Torch
+message(STATUS "Eigen3 include directory: ${EIGEN3_INCLUDE_DIR}")
+message(STATUS "Torch include directory: ${TORCH_INCLUDE_DIRS}")
+message(STATUS "Torch library directory: ${TORCH_LIBRARIES}")
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
+
 # Define source files for CppUnitTest
 set(SOURCE_FILES_CPPUNITTEST
     CppUnitTest/Failure.cpp
@@ -186,16 +207,19 @@ set(SOURCE_FILES_COMPFINANCE_ALL
     CompFinanceTests/DupireMonteCarloFDM.cpp
 )
 
-#add_executable (compFinanceTest ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_COMPFINANCE_ALL})
-
-
 set(SOURCE_FILES_EXAMPLE_AAD
     OptionPricingFramework/tests/testTorchCppExample.cpp
 )
 
+add_executable(torchCppExample ${SOURCE_FILES_EXAMPLE_AAD})
+target_link_libraries(torchCppExample "${TORCH_LIBRARIES}")
+
 set(SOURCE_FILES_OPTION_PRICING_BS
     OptionPricingFramework/tests/testBlackScholesClosedForm.cpp
 )
+
+add_executable(blackScholesClosedForm ${SOURCE_FILES_OPTION_PRICING_BS})
+target_link_libraries(blackScholesClosedForm "${TORCH_LIBRARIES}")
 
 set(SOURCE_FILES_OPTION_PRICING_MC
     OptionPricingFramework/include/methods/MonteCarlo.hpp
@@ -203,9 +227,16 @@ set(SOURCE_FILES_OPTION_PRICING_MC
     OptionPricingFramework/tests/testMonteCarloEuropeanOption.cpp
 )
 
+add_executable(monteCarloEuropeanOption ${SOURCE_FILES_OPTION_PRICING_MC})
+target_link_libraries(monteCarloEuropeanOption "${TORCH_LIBRARIES}")
+
 set(SOURCE_FILES_EIGEN_CPP
     OptionPricingFramework/tests/testEigenCppExample.cpp
 )
+
+add_executable(eigenCppExample ${SOURCE_FILES_EIGEN_CPP})
+target_include_directories(eigenCppExample PRIVATE ${EIGEN3_INCLUDE_DIR})
+
 
 set(SOURCE_FILES_LOG_NORMAL_PROCESS_TEST
     OptionPricingFramework/include/Processes/StochasticProcess.hpp
@@ -214,53 +245,29 @@ set(SOURCE_FILES_LOG_NORMAL_PROCESS_TEST
     OptionPricingFramework/tests/testLogNormalProcess.cpp
 )
 
+add_executable(testLogNormalProcess ${SOURCE_FILES_LOG_NORMAL_PROCESS_TEST})
+target_link_libraries(testLogNormalProcess "${TORCH_LIBRARIES}")
+
+
 set(SOURCE_FILES_LONGSTAFF_SCHWARTZ
     OptionPricingFramework/include/Methods/LongstaffSchwartz.hpp
     OptionPricingFramework/src/Methods/LongstaffSchwartz.cpp
     OptionPricingFramework/tests/testLongstaffSchwartz.cpp
 )
+add_executable(testLongstaffSchwartz ${SOURCE_FILES_LONGSTAFF_SCHWARTZ})
+target_link_libraries(testLongstaffSchwartz "${TORCH_LIBRARIES}")
 
-# Set the paths to the third-party libraries
-set(THIRD_PARTY_LIBS_DIR $ENV{HOME}/Downloads/ThirdPartyLibs)
+set(SOURCE_FILES_BINOMIAL_TREE
+    OptionPricingFramework/include/methods/BinomialTree.hpp
+    OptionPricingFramework/src/methods/BinomialTree.cpp
+    OptionPricingFramework/tests/testBinomialTree.cpp
+)
 
-# Include Eigen3
-set(EIGEN3_INCLUDE_DIR ${THIRD_PARTY_LIBS_DIR}/eigen-3.4.0)
-include_directories(${EIGEN3_INCLUDE_DIR})
-
-# Include libtorch
-set(Torch_DIR ${THIRD_PARTY_LIBS_DIR}/libtorch/share/cmake/Torch)
-find_package(Torch REQUIRED)
-
-# Exclude libkineto.a from linking
-list(REMOVE_ITEM TORCH_LIBRARIES "${THIRD_PARTY_LIBS_DIR}/libtorch/lib/libkineto.a")
-
-# Print the paths of Eigen3 and Torch
-message(STATUS "Eigen3 include directory: ${EIGEN3_INCLUDE_DIR}")
-message(STATUS "Torch include directory: ${TORCH_INCLUDE_DIRS}")
-message(STATUS "Torch library directory: ${TORCH_LIBRARIES}")
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
-
-add_executable(torchCppExample ${SOURCE_FILES_EXAMPLE_AAD})
-target_link_libraries(torchCppExample "${TORCH_LIBRARIES}")
-
-add_executable(blackScholesClosedForm ${SOURCE_FILES_OPTION_PRICING_BS})
-target_link_libraries(blackScholesClosedForm "${TORCH_LIBRARIES}")
-
-add_executable(monteCarloEuropeanOption ${SOURCE_FILES_OPTION_PRICING_MC})
-target_link_libraries(monteCarloEuropeanOption "${TORCH_LIBRARIES}")
-
-add_executable(eigenCppExample ${SOURCE_FILES_EIGEN_CPP})
-target_include_directories(eigenCppExample PRIVATE ${EIGEN3_INCLUDE_DIR})
-
-add_executable(testLogNormalProcess ${SOURCE_FILES_LOG_NORMAL_PROCESS_TEST})
-target_link_libraries(testLogNormalProcess "${TORCH_LIBRARIES}")
+add_executable(binomialTree ${SOURCE_FILES_BINOMIAL_TREE})
+target_link_libraries(binomialTree "${TORCH_LIBRARIES}")
 
 add_executable(testLinAL OptionPricingFramework/tests/testLinAL.cpp)
 target_link_libraries(testLinAL "${TORCH_LIBRARIES}")
-
-add_executable(testLongstaffSchwartz ${SOURCE_FILES_LONGSTAFF_SCHWARTZ})
-target_link_libraries(testLongstaffSchwartz "${TORCH_LIBRARIES}")
 
 
 add_executable(singleTest OptionPricingFramework/tests/singleTest.cpp)
