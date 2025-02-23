@@ -215,6 +215,8 @@ add_executable(torchCppExample ${SOURCE_FILES_EXAMPLE_AAD})
 target_link_libraries(torchCppExample "${TORCH_LIBRARIES}")
 
 set(SOURCE_FILES_OPTION_PRICING_BS
+    OptionPricingFramework/include/methods/BlackScholesClosedForm.hpp
+    OptionPricingFramework/src/methods/BlackScholesClosedForm.cpp
     OptionPricingFramework/tests/testBlackScholesClosedForm.cpp
 )
 

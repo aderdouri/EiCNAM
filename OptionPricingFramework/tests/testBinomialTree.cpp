@@ -12,7 +12,7 @@ int main()
     torch::Tensor r = torch::tensor(0.05, torch::dtype(torch::kDouble).requires_grad(true));
     torch::Tensor sigma = torch::tensor(0.2, torch::dtype(torch::kDouble).requires_grad(true));
     torch::Tensor T = torch::tensor(1.0, torch::dtype(torch::kDouble).requires_grad(true));
-    int N = 100;
+    int N = 10;
 
     // Create BinomialTree instance
     BinomialTree binomialTree(S0, K, r, sigma, T, N);

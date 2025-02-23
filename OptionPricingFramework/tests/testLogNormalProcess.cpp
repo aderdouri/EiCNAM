@@ -50,10 +50,3 @@ int main()
 
     return 0;
 }
-
-// Call Option Price: 10.4506
-// Delta ClosedForm (dPrice/dS): 0.636831
-// Rho ClosedForm (dPrice/dr): 53.2325
-// Vega ClosedForm (dPrice/dSigma): 37.524
-// Theta ClosedForm (dPrice/dT): -6.41403
-// Gamma ClosedForm (d2Price/dS2): 0.018762
