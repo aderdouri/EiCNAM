@@ -24,7 +24,8 @@ torch::Tensor BinomialTree::priceOption()
     for (int i = 0; i <= N; ++i)
     {
         torch::Tensor stockPrice = S0 * torch::pow(u, N - i) * torch::pow(d, i);
-        optionPrice[i] = torch::max(stockPrice - K, torch::tensor(0.0, S0.options()));
+        // optionPrice[i] = torch::max(stockPrice - K, torch::tensor(0.0, S0.options()));
+        optionPrice[i] = softplus(stockPrice - K);
     }
 
     // Backward induction
