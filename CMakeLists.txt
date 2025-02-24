@@ -243,6 +243,7 @@ target_include_directories(eigenCppExample PRIVATE ${EIGEN3_INCLUDE_DIR})
 set(SOURCE_FILES_LOG_NORMAL_PROCESS_TEST
     OptionPricingFramework/include/Processes/StochasticProcess.hpp
     OptionPricingFramework/include/Processes/LogNormalProcess.hpp
+    OptionPricingFramework/src/Processes/StochasticProcess.cpp
     OptionPricingFramework/src/Processes/LogNormalProcess.cpp
     OptionPricingFramework/tests/testLogNormalProcess.cpp
 )

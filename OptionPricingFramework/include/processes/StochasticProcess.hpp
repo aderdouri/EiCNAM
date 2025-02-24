@@ -7,8 +7,7 @@
 class StochasticProcess
 {
 public:
-    StochasticProcess(torch::Tensor S0, torch::Tensor mu, torch::Tensor sigma)
-        : S0(S0), mu(mu), sigma(sigma) {}
+    StochasticProcess(torch::Tensor S0, torch::Tensor mu, torch::Tensor sigma);
 
     virtual torch::Tensor evolve(torch::Tensor S, double dt, torch::Tensor dW) = 0;
 
