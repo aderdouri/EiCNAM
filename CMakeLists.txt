@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.26 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 project(PyTorchCpp)
 
 # Set the C++ standard
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -215,17 +215,38 @@ add_executable(torchCppExample ${SOURCE_FILES_EXAMPLE_AAD})
 target_link_libraries(torchCppExample "${TORCH_LIBRARIES}")
 
 set(SOURCE_FILES_OPTION_PRICING_BS
-    OptionPricingFramework/include/methods/BlackScholesClosedForm.hpp
-    OptionPricingFramework/src/methods/BlackScholesClosedForm.cpp
+    OptionPricingFramework/include/Methods/BlackScholesClosedForm.hpp
+    OptionPricingFramework/src/Methods/BlackScholesClosedForm.cpp
     OptionPricingFramework/tests/testBlackScholesClosedForm.cpp
 )
 
 add_executable(blackScholesClosedForm ${SOURCE_FILES_OPTION_PRICING_BS})
 target_link_libraries(blackScholesClosedForm "${TORCH_LIBRARIES}")
 
+
+set(SOURCE_FILES_OPTION_STANDARD_BS
+    OptionPricingFramework/include/Methods/BS.hpp
+    OptionPricingFramework/src/Methods/BS.cpp
+    OptionPricingFramework/tests/testBS.cpp
+)
+
+add_executable(testBS ${SOURCE_FILES_OPTION_STANDARD_BS})
+target_link_libraries(testBS "${TORCH_LIBRARIES}")
+
+
+set(SOURCE_FILES_OPTION_STANDARD_BSWrapper
+    OptionPricingFramework/include/Methods/BSWrapper.hpp
+    OptionPricingFramework/src/Methods/BSWrapper.cpp
+    OptionPricingFramework/tests/testBSWrapper.cpp
+)
+
+add_executable(testBSWrapper ${SOURCE_FILES_OPTION_STANDARD_BS})
+target_link_libraries(testBSWrapper "${TORCH_LIBRARIES}")
+
+
 set(SOURCE_FILES_OPTION_PRICING_MC
-    OptionPricingFramework/include/methods/MonteCarlo.hpp
-    OptionPricingFramework/src/methods/MonteCarlo.cpp
+    OptionPricingFramework/include/Methods/MonteCarlo.hpp
+    OptionPricingFramework/src/Methods/MonteCarlo.cpp
     OptionPricingFramework/tests/testMonteCarloEuropeanOption.cpp
 )
 
@@ -252,17 +273,17 @@ add_executable(testLogNormalProcess ${SOURCE_FILES_LOG_NORMAL_PROCESS_TEST})
 target_link_libraries(testLogNormalProcess "${TORCH_LIBRARIES}")
 
 
-set(SOURCE_FILES_LONGSTAFF_SCHWARTZ
-    OptionPricingFramework/include/Methods/LongstaffSchwartz.hpp
-    OptionPricingFramework/src/Methods/LongstaffSchwartz.cpp
-    OptionPricingFramework/tests/testLongstaffSchwartz.cpp
-)
-add_executable(testLongstaffSchwartz ${SOURCE_FILES_LONGSTAFF_SCHWARTZ})
-target_link_libraries(testLongstaffSchwartz "${TORCH_LIBRARIES}")
+# set(SOURCE_FILES_LONGSTAFF_SCHWARTZ
+#     OptionPricingFramework/include/Methods/LongstaffSchwartz.hpp
+#     OptionPricingFramework/src/Methods/LongstaffSchwartz.cpp
+#     OptionPricingFramework/tests/testLongstaffSchwartz.cpp
+# )
+# add_executable(testLongstaffSchwartz ${SOURCE_FILES_LONGSTAFF_SCHWARTZ})
+# target_link_libraries(testLongstaffSchwartz "${TORCH_LIBRARIES}")
 
 set(SOURCE_FILES_BINOMIAL_TREE
-    OptionPricingFramework/include/methods/BinomialTree.hpp
-    OptionPricingFramework/src/methods/BinomialTree.cpp
+    OptionPricingFramework/include/Methods/BinomialTree.hpp
+    OptionPricingFramework/src/Methods/BinomialTree.cpp
     OptionPricingFramework/tests/testBinomialTree.cpp
 )
 
