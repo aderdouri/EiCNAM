@@ -296,3 +296,6 @@ target_link_libraries(testLinAL "${TORCH_LIBRARIES}")
 
 add_executable(singleTest OptionPricingFramework/tests/singleTest.cpp)
 target_link_libraries(singleTest "${TORCH_LIBRARIES}")
+
+add_executable(testCheckGPUs OptionPricingFramework/tests/testCheckGPUs.cpp)
+target_link_libraries(testCheckGPUs "${TORCH_LIBRARIES}")
