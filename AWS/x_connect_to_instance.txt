@@ -1,0 +1,11 @@
+#Summary step by step to create an aws ec2 instance
+#Set up your AWS profile (myLearning).
+#Create a key pair (myLearning-key.pem).
+#Create or use an existing security group.
+#Find the latest Amazon Linux AMI.
+#Launch the g5.xlarge instance.
+#Check its status and retrieve the public IP.
+#Connect via SSH.
+
+
+ssh -i ~./.ssh/myLearning-key.pem ec2-user@<INSTANCE_PUBLIC_IP>
