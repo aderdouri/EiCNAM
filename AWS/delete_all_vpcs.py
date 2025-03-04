@@ -2,7 +2,7 @@ import boto3
 import time
 
 # Initialize session with profile
-session = boto3.Session(profile_name="myLearning", region_name="us-west-2")
+session = boto3.Session(profile_name="myLearning", region_name="us-east-1")
 ec2 = session.client("ec2")
 
 # Retrieve all VPCs

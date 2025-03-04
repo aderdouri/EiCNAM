@@ -1,11 +1,11 @@
 import boto3
 
 # Initialize session with profile
-session = boto3.Session(profile_name="myLearning", region_name="us-west-2")
+session = boto3.Session(profile_name="myLearning", region_name="us-east-1")
 ec2 = session.client("ec2")
 
 # Specify the availability zone
-availability_zone = "us-west-2a"
+availability_zone = "us-east-1a"
 
 # Create VPC
 vpc_response = ec2.create_vpc(CidrBlock="10.0.0.0/16")

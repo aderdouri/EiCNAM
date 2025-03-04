@@ -1,8 +1,8 @@
 import boto3
 import os
 
-# Initialize session with profile
-session = boto3.Session(profile_name="myLearning")
+# Initialize session with profile and region
+session = boto3.Session(profile_name="myLearning", region_name="us-east-1")
 ec2 = session.client("ec2")
 
 # Create a new key pair

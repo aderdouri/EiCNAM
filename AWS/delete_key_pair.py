@@ -1,14 +1,15 @@
 import boto3
 
-# Initialize EC2 client
-ec2 = boto3.client('ec2')
+region = "us-east-1"  # Change this if needed
+ec2 = boto3.client("ec2", region_name=region)
 
-# Specify the key pair name to delete
-key_pair_name = "myBeBoulder2025Feb"  # Change this to your key pair name
+# List key pairs
+key_pairs = ec2.describe_key_pairs()["KeyPairs"]
+print("Existing Key Pairs:")
+for key in key_pairs:
+    print(f"- {key['KeyName']}")
 
-# Delete the key pair
-try:
-    ec2.delete_key_pair(KeyName=key_pair_name)
-    print(f"Key pair '{key_pair_name}' deleted successfully.")
-except Exception as e:
-    print(f"Error deleting key pair: {str(e)}")
+# Delete all key pairs
+for key in key_pairs:
+    ec2.delete_key_pair(KeyName=key["KeyName"])
+    print(f"Deleted Key Pair: {key['KeyName']}")
