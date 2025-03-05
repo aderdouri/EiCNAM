@@ -1,7 +1,7 @@
 import boto3
 
-# Create an EC2 client
-ec2 = boto3.client("ec2")
+# Create an EC2 client with region
+ec2 = boto3.client("ec2", region_name="us-east-1")
 
 # Retrieve all VPCs
 response = ec2.describe_vpcs()

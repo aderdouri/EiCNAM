@@ -19,6 +19,16 @@ for vpc in vpcs:
 
     print(f"Deleting VPC: {vpc_id}")
 
+    # Fetch and delete all instances in the VPC
+    instances_response = ec2.describe_instances(Filters=[{"Name": "vpc-id", "Values": [vpc_id]}])
+    instance_ids = [instance["InstanceId"] for reservation in instances_response["Reservations"] for instance in reservation["Instances"]]
+    if instance_ids:
+        ec2.terminate_instances(InstanceIds=instance_ids)
+        print(f"Terminating instances: {', '.join(instance_ids)}")
+        waiter = ec2.get_waiter('instance_terminated')
+        waiter.wait(InstanceIds=instance_ids)
+        print("All instances terminated.")
+
     # 1. Delete subnets
     subnets = ec2.describe_subnets(Filters=[{"Name": "vpc-id", "Values": [vpc_id]}])["Subnets"]
     for subnet in subnets:
