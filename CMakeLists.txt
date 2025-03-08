@@ -223,6 +223,14 @@ set(SOURCE_FILES_OPTION_PRICING_BS
 add_executable(blackScholesClosedForm ${SOURCE_FILES_OPTION_PRICING_BS})
 target_link_libraries(blackScholesClosedForm "${TORCH_LIBRARIES}")
 
+set(SOURCE_FILES_OPTION_PRICING_BS_GRADIENTS
+    OptionPricingFramework/include/Methods/BlackScholesClosedForm.hpp
+    OptionPricingFramework/src/Methods/BlackScholesClosedForm.cpp
+    OptionPricingFramework/tests/testBSGradients.cpp
+)
+
+add_executable(bsGradients ${SOURCE_FILES_OPTION_PRICING_BS_GRADIENTS})
+target_link_libraries(bsGradients "${TORCH_LIBRARIES}")
 
 set(SOURCE_FILES_OPTION_STANDARD_BS
     OptionPricingFramework/include/Methods/BS.hpp
