@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 project(PyTorchCpp)
 
 # Set the C++ standard
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -36,40 +36,14 @@ message(STATUS "Torch library directory: ${TORCH_LIBRARIES}")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
-# Define source files for CppUnitTest
-set(SOURCE_FILES_CPPUNITTEST
-    CppUnitTest/Failure.cpp
-    CppUnitTest/Main.cpp
-    CppUnitTest/Test.h
-    CppUnitTest/TestRegistry.cpp
-    CppUnitTest/TestResult.cpp
-    CppUnitTest/Failure.h
-    CppUnitTest/Test.cpp
-    CppUnitTest/TestHarness.h
-    CppUnitTest/TestRegistry.h
-    CppUnitTest/TestResult.h
-)
+# Include CppUnitTest as a static library
+add_subdirectory(CppUnitTest)
 
-# Define source files for AAD (basic Instrumentation)
-set(SOURCE_FILES_COMPFINANCE_AAD
-    CompFinance/AAD.cpp
-    CompFinance/AAD.h
-    CompFinance/AADNode.h
-    CompFinance/AADNumber.h
-    CompFinance/AADTape.h
-    CompFinance/blocklist.h
-)
+# Include CompFinance as a shared library
+add_subdirectory(CompFinance)
 
-# Define source files for AADExpr (advanced Instrumentation)
-set(SOURCE_FILES_COMPFINANCE_AAD_EXPR
-    CompFinance/AADExpr.h
-    CompFinance/AADNode.h
-    CompFinance/AAD.cpp
-    CompFinance/AAD.h
-    CompFinance/AADTape.h
-    CompFinance/blocklist.h
-    CompFinance/gaussians.h
-)
+# Include OptionPricingFramework as a separate project
+add_subdirectory(OptionPricingFramework)
 
 # Examples
 set(SOURCE_FILES_CRTP
@@ -130,19 +104,25 @@ set(SOURCE_FILES_SABR_PRICE_FORMULA
 #add_executable(monteCarloSimulation ${SOURCE_FILES_MONTE_CARLO})
 
 
-# set(SOURCE_FILES_BASIC_INSTRUMENTATION 
-#     Tutorials/tests/BasicInstrumentationTest.cpp
-# )
+set(SOURCE_FILES_BASIC_INSTRUMENTATION 
+    Tutorials/tests/BasicInstrumentationTest.cpp
+)
 
-# set(SOURCE_FILES_BASIC_INSTRUMENTATION_EXPR 
-#     Tutorials/tests/BasicInstrumentationExprTest.cpp
-# )
+set(SOURCE_FILES_BASIC_INSTRUMENTATION_EXPR 
+     Tutorials/tests/BasicInstrumentationExprTest.cpp
+)
 
-#add_executable (autoDiff ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_COMPFINANCE_AAD} ${SOURCE_FILES_BASIC_INSTRUMENTATION})
-#target_compile_definitions(autoDiff PRIVATE AADET=0)
+add_executable(autoDiff
+    ${SOURCE_FILES_BASIC_INSTRUMENTATION}
+)
+target_compile_definitions(autoDiff PRIVATE AADET=0)
+target_link_libraries(autoDiff PRIVATE CppUnitTest CompFinance_AAD)
 
-#add_executable (autoDiffExpr ${SOURCE_FILES_CPPUNITTEST} ${SOURCE_FILES_COMPFINANCE_AAD} ${SOURCE_FILES_BASIC_INSTRUMENTATION_EXPR})
-#target_compile_definitions(autoDiffExpr PRIVATE AADET=1)
+add_executable(autoDiffExpr
+    ${SOURCE_FILES_BASIC_INSTRUMENTATION_EXPR}
+)
+target_compile_definitions(autoDiffExpr PRIVATE AADET=1)
+target_link_libraries(autoDiffExpr PRIVATE CppUnitTest CompFinance_AADExpr)
 
 
 # set(SOURCE_FILES_DOC_UWE 
@@ -164,39 +144,6 @@ set(SOURCE_FILES_SABR_PRICE_FORMULA
 
 
 set(SOURCE_FILES_COMPFINANCE_ALL
-    CompFinance/AAD.cpp
-    CompFinance/AAD.cpp
-    CompFinance/AAD.h
-    CompFinance/AADExpr.h
-    CompFinance/AADNode.h
-    CompFinance/AADNumber.h
-    CompFinance/AADTape.h
-    CompFinance/ConcurrentQueue.h
-    CompFinance/ThreadPool.cpp
-    CompFinance/analytics.h
-    CompFinance/blocklist.h
-    CompFinance/choldc.h
-    CompFinance/gaussians.h
-    CompFinance/interp.h
-    CompFinance/ivs.h
-    CompFinance/main.h
-    CompFinance/matrix.h
-    CompFinance/mcBase.cpp
-    CompFinance/mcBase.h
-    CompFinance/mcMdl.h
-    CompFinance/mcMdlBS.h
-    CompFinance/mcMdlDupire.h
-    CompFinance/mcMdlMultiDisplaced.h
-    CompFinance/mcPrd.h
-    CompFinance/mcPrdMulti.h
-    CompFinance/mrg32k3a.h
-    CompFinance/sobol.cpp
-    CompFinance/sobol.h
-    CompFinance/store.h
-    CompFinance/store.cpp
-    CompFinance/ThreadPool.h
-    CompFinance/toyCode.h
-    CompFinance/utility.h
     #CompFinanceTests/BlackScholesTest.cpp
     #CompFinanceTests/mertonTest.cpp
     #CompFinanceTests/AADriskPutEuropeanTest.cpp
@@ -206,104 +153,3 @@ set(SOURCE_FILES_COMPFINANCE_ALL
     CompFinanceTests/DupireMonteCarlo.cpp
     CompFinanceTests/DupireMonteCarloFDM.cpp
 )
-
-set(SOURCE_FILES_EXAMPLE_AAD
-    OptionPricingFramework/tests/testTorchCppExample.cpp
-)
-
-add_executable(torchCppExample ${SOURCE_FILES_EXAMPLE_AAD})
-target_link_libraries(torchCppExample "${TORCH_LIBRARIES}")
-
-set(SOURCE_FILES_OPTION_PRICING_BS
-    OptionPricingFramework/include/Methods/BlackScholesClosedForm.hpp
-    OptionPricingFramework/src/Methods/BlackScholesClosedForm.cpp
-    OptionPricingFramework/tests/testBlackScholesClosedForm.cpp
-)
-
-add_executable(blackScholesClosedForm ${SOURCE_FILES_OPTION_PRICING_BS})
-target_link_libraries(blackScholesClosedForm "${TORCH_LIBRARIES}")
-
-set(SOURCE_FILES_OPTION_PRICING_BS_GRADIENTS
-    OptionPricingFramework/include/Methods/BlackScholesClosedForm.hpp
-    OptionPricingFramework/src/Methods/BlackScholesClosedForm.cpp
-    OptionPricingFramework/tests/testBSGradients.cpp
-)
-
-add_executable(bsGradients ${SOURCE_FILES_OPTION_PRICING_BS_GRADIENTS})
-target_link_libraries(bsGradients "${TORCH_LIBRARIES}")
-
-set(SOURCE_FILES_OPTION_STANDARD_BS
-    OptionPricingFramework/include/Methods/BS.hpp
-    OptionPricingFramework/src/Methods/BS.cpp
-    OptionPricingFramework/tests/testBS.cpp
-)
-
-add_executable(testBS ${SOURCE_FILES_OPTION_STANDARD_BS})
-target_link_libraries(testBS "${TORCH_LIBRARIES}")
-
-
-set(SOURCE_FILES_OPTION_STANDARD_BSWrapper
-    OptionPricingFramework/include/Methods/BSWrapper.hpp
-    OptionPricingFramework/src/Methods/BSWrapper.cpp
-    OptionPricingFramework/tests/testBSWrapper.cpp
-)
-
-add_executable(testBSWrapper ${SOURCE_FILES_OPTION_STANDARD_BS})
-target_link_libraries(testBSWrapper "${TORCH_LIBRARIES}")
-
-
-set(SOURCE_FILES_OPTION_PRICING_MC
-    OptionPricingFramework/include/Methods/MonteCarlo.hpp
-    OptionPricingFramework/src/Methods/MonteCarlo.cpp
-    OptionPricingFramework/tests/testMonteCarloEuropeanOption.cpp
-)
-
-add_executable(monteCarloEuropeanOption ${SOURCE_FILES_OPTION_PRICING_MC})
-target_link_libraries(monteCarloEuropeanOption "${TORCH_LIBRARIES}")
-
-set(SOURCE_FILES_EIGEN_CPP
-    OptionPricingFramework/tests/testEigenCppExample.cpp
-)
-
-add_executable(eigenCppExample ${SOURCE_FILES_EIGEN_CPP})
-target_include_directories(eigenCppExample PRIVATE ${EIGEN3_INCLUDE_DIR})
-
-
-set(SOURCE_FILES_LOG_NORMAL_PROCESS_TEST
-    OptionPricingFramework/include/Processes/StochasticProcess.hpp
-    OptionPricingFramework/include/Processes/LogNormalProcess.hpp
-    OptionPricingFramework/src/Processes/StochasticProcess.cpp
-    OptionPricingFramework/src/Processes/LogNormalProcess.cpp
-    OptionPricingFramework/tests/testLogNormalProcess.cpp
-)
-
-add_executable(testLogNormalProcess ${SOURCE_FILES_LOG_NORMAL_PROCESS_TEST})
-target_link_libraries(testLogNormalProcess "${TORCH_LIBRARIES}")
-
-
-# set(SOURCE_FILES_LONGSTAFF_SCHWARTZ
-#     OptionPricingFramework/include/Methods/LongstaffSchwartz.hpp
-#     OptionPricingFramework/src/Methods/LongstaffSchwartz.cpp
-#     OptionPricingFramework/tests/testLongstaffSchwartz.cpp
-# )
-# add_executable(testLongstaffSchwartz ${SOURCE_FILES_LONGSTAFF_SCHWARTZ})
-# target_link_libraries(testLongstaffSchwartz "${TORCH_LIBRARIES}")
-
-set(SOURCE_FILES_BINOMIAL_TREE
-    OptionPricingFramework/include/Methods/BinomialTree.hpp
-    OptionPricingFramework/src/Methods/BinomialTree.cpp
-    OptionPricingFramework/tests/testBinomialTree.cpp
-)
-
-add_executable(binomialTree ${SOURCE_FILES_BINOMIAL_TREE})
-target_link_libraries(binomialTree "${TORCH_LIBRARIES}")
-
-add_executable(testLinAL OptionPricingFramework/tests/testLinAL.cpp)
-target_link_libraries(testLinAL "${TORCH_LIBRARIES}")
-
-
-add_executable(singleTest OptionPricingFramework/tests/singleTest.cpp)
-target_link_libraries(singleTest "${TORCH_LIBRARIES}")
-
-add_executable(testCheckGPUs OptionPricingFramework/tests/testCheckGPUs.cpp)
-target_link_libraries(testCheckGPUs "${TORCH_LIBRARIES}")
