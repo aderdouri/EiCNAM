@@ -21,6 +21,7 @@ As long as this comment is preserved at the top of the file
 //  The custom number type
 
 #include <algorithm>
+#include <iostream>
 #include "AADTape.h"
 
 class Number
@@ -115,9 +116,9 @@ public:
 
     Number(const double val) : myValue(val)
     {
-        std::cout << "Creating Number with value: " << val << std::endl;
+        // std::cout << "Creating Number with value: " << val << std::endl;
         createNode<0>();
-        std::cout << "Number created. Node address: " << myNode << std::endl;
+        // std::cout << "Number created. Node address: " << myNode << std::endl;
     }
 
     //  Put on tape on assignment

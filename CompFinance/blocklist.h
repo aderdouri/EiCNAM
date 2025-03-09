@@ -1,3 +1,4 @@
+
 /*
 Written by Antoine Savine in 2018
 
@@ -14,7 +15,7 @@ As long as this comment is preserved at the top of the file
 */
 
 #pragma once
-// #pragma warning(disable : 4018)
+#pragma warning(disable : 4018)
 
 //  Blocklist data structure for AAD memory management
 //  See chapter 10, unchanged with expression templates of chapter 15
@@ -22,7 +23,6 @@ As long as this comment is preserved at the top of the file
 #include <array>
 #include <list>
 #include <iterator>
-#include <iostream>
 using namespace std;
 
 template <class T, size_t block_size>
@@ -53,21 +53,15 @@ class blocklist
     //  Create new array
     void newblock()
     {
-        std::cout << "Creating new block..." << std::endl;
         data.emplace_back();
         cur_block = last_block = prev(data.end());
         next_space = cur_block->begin();
         last_space = cur_block->end();
-        std::cout << "New block created. Block size: " << block_size << std::endl;
-        std::cout << "Current block address: " << &(*cur_block) << std::endl;
-        std::cout << "Next space address: " << &(*next_space) << std::endl;
-        std::cout << "Last space address: " << &(*last_space) << std::endl;
     }
 
     //  Move on to next array
     void nextblock()
     {
-        std::cout << "Moving to next block..." << std::endl;
         //  This is the last array: create new
         if (cur_block == last_block)
         {
@@ -79,9 +73,6 @@ class blocklist
             next_space = cur_block->begin();
             last_space = cur_block->end();
         }
-        std::cout << "Moved to next block. Current block address: " << &(*cur_block) << std::endl;
-        std::cout << "Next space address: " << &(*next_space) << std::endl;
-        std::cout << "Last space address: " << &(*last_space) << std::endl;
     }
 
 public:
@@ -121,21 +112,17 @@ public:
     template <typename... Args>
     T *emplace_back(Args &&...args)
     {
-        std::cout << "Emplacing back node..." << std::endl;
         //  No more space in current array
         if (next_space == last_space)
         {
             nextblock();
         }
         //  Placement new, construct in memory pointed by next
-        T *emplaced = new (&*next_space)    //  memory pointed by next as T*
-            T(std::forward<Args>(args)...); //  perfect forwarding of ctor arguments
+        T *emplaced = new (&*next_space) //  memory pointed by next as T*
+            T(forward<Args>(args)...);   //  perfect forwarding of ctor arguments
 
         //  Advance next
         ++next_space;
-
-        std::cout << "Node emplaced. Emplaced address: " << emplaced << std::endl;
-        std::cout << "Next space address: " << &(*next_space) << std::endl;
 
         //  Return
         return emplaced;
@@ -144,7 +131,6 @@ public:
     //  Overload for default constructed
     T *emplace_back()
     {
-        std::cout << "Emplacing back node..." << std::endl;
         //  No more space in current array
         if (next_space == last_space)
         {

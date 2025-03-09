@@ -12,14 +12,12 @@ using namespace std;
 class Node
 {
 protected:
+	vector<Node *> myArguments;
 
-	vector<Node*> myArguments;
-
-	double		myResult;
-	double		myAdjoint = 0.0;
+	double myResult;
+	double myAdjoint = 0.0;
 
 public:
-
 	virtual ~Node() = default;
 
 	// Access result
@@ -29,14 +27,15 @@ public:
 	}
 
 	// Access adjoint
-	double& adjoint()
+	double &adjoint()
 	{
 		return myAdjoint;
 	}
 
 	void resetAdjoints()
 	{
-		for (auto argument : myArguments) argument->resetAdjoints();
+		for (auto argument : myArguments)
+			argument->resetAdjoints();
 		myAdjoint = 0.0;
 	}
 
@@ -46,8 +45,7 @@ public:
 class PlusNode : public Node
 {
 public:
-
-	PlusNode(Node* lhs, Node* rhs)
+	PlusNode(Node *lhs, Node *rhs)
 	{
 		myArguments.resize(2);
 		myArguments[0] = lhs;
@@ -67,8 +65,7 @@ public:
 class TimesNode : public Node
 {
 public:
-
-	TimesNode(Node* lhs, Node* rhs)
+	TimesNode(Node *lhs, Node *rhs)
 	{
 		myArguments.resize(2);
 		myArguments[0] = lhs;
@@ -88,8 +85,7 @@ public:
 class LogNode : public Node
 {
 public:
-
-	LogNode(Node* arg)
+	LogNode(Node *arg)
 	{
 		myArguments.resize(1);
 		myArguments[0] = arg;
@@ -107,19 +103,18 @@ public:
 class Leaf : public Node
 {
 public:
-
 	Leaf(double val)
 	{
 		myResult = val;
 	}
 
-	double getVal() 
-	{ 
+	double getVal()
+	{
 		return myResult;
 	}
 
-	void setVal(double val) 
-	{ 
+	void setVal(double val)
+	{
 		myResult = val;
 	}
 
@@ -128,42 +123,41 @@ public:
 
 class Number
 {
-	Node* myNode;
+	Node *myNode;
 
 public:
-
 	// The tape, as a public static member
 	static vector<unique_ptr<Node>> tape;
 
 	// Create node and put it on the tape
-	Number(double val) 
-		: myNode(new Leaf(val)) 
+	Number(double val)
+		: myNode(new Leaf(val))
 	{
 		tape.push_back(unique_ptr<Node>(myNode));
 	}
 
-	Number(Node* node) 
+	Number(Node *node)
 		: myNode(node) {}
 
-	Node* node() 
-	{ 
-		return myNode; 
+	Node *node()
+	{
+		return myNode;
 	}
 
 	void setVal(double val)
 	{
 		// Cast to Leaf, only leaves can be changed
-		dynamic_cast<Leaf*>(myNode)->setVal(val);
+		dynamic_cast<Leaf *>(myNode)->setVal(val);
 	}
 
 	double getVal()
 	{
 		// Only leaves can be read
-		return dynamic_cast<Leaf*>(myNode)->getVal();
+		return dynamic_cast<Leaf *>(myNode)->getVal();
 	}
 
 	// Accessor/setter, from the inputs
-	double& adjoint()
+	double &adjoint()
 	{
 		return myNode->adjoint();
 	}
@@ -173,11 +167,11 @@ public:
 	{
 		myNode->resetAdjoints();
 		myNode->adjoint() = 1.0;
-		
+
 		// Find my node on the tape, searching from the last
 		auto it = tape.rbegin(); // last node on the tape
 		while (it->get() != myNode)
-			++it;	// reverse iter: ++ means go back
+			++it; // reverse iter: ++ means go back
 
 		// Now it is on my node
 		// Conduct propogation in reverse order
@@ -194,7 +188,7 @@ vector<unique_ptr<Node>> Number::tape;
 Number operator+(Number lhs, Number rhs)
 {
 	// Create node: note eagerly computes result
-	Node* n = new PlusNode(lhs.node(), rhs.node());
+	Node *n = new PlusNode(lhs.node(), rhs.node());
 	// Put on tape
 	Number::tape.push_back(unique_ptr<Node>(n));
 	// Return result
@@ -204,7 +198,7 @@ Number operator+(Number lhs, Number rhs)
 Number operator*(Number lhs, Number rhs)
 {
 	// Create node: note eagerly computes result
-	Node* n = new TimesNode(lhs.node(), rhs.node());
+	Node *n = new TimesNode(lhs.node(), rhs.node());
 	// Put on tape
 	Number::tape.push_back(unique_ptr<Node>(n));
 	// Return result
@@ -214,7 +208,7 @@ Number operator*(Number lhs, Number rhs)
 Number log(Number arg)
 {
 	// Create node: note eagerly computes result
-	Node* n = new LogNode(arg.node());
+	Node *n = new LogNode(arg.node());
 	// Put on tape
 	Number::tape.push_back(unique_ptr<Node>(n));
 	// Return result
@@ -232,7 +226,7 @@ T f(T x[5])
 
 int main()
 {
-	Number x[5] = { 1.0, 2.0, 3.0, 4.0, 5.0 };
+	Number x[5] = {1.0, 2.0, 3.0, 4.0, 5.0};
 
 	// Evaluate and build the tape
 	Number y = f(x);
