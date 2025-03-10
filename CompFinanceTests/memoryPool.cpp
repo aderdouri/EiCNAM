@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <memory>
-#include <unordered_map>
 #include <cmath>
 #include <cstdlib>
 
@@ -85,29 +84,12 @@ public:
 struct Tape
 {
     std::vector<Node *> nodes;
-    std::unordered_map<std::string, Node *> expression_cache; // CSE cache
     NodePool pool;
-
-    // Generate a unique key for Common Subexpression Elimination
-    std::string generateKey(OpType op, double lhs_value, double rhs_value)
-    {
-        return std::to_string(static_cast<int>(op)) + "_" +
-               std::to_string(lhs_value) + "_" + std::to_string(rhs_value);
-    }
 
     Node *addNode(OpType op, Node *lhs, Node *rhs, double value)
     {
-        std::string key = generateKey(op, lhs ? lhs->value : 0.0, rhs ? rhs->value : 0.0);
-
-        // **Ensure unique computation nodes (Fix CSE issue)**
-        if (expression_cache.find(key) != expression_cache.end())
-        {
-            return expression_cache[key]; // Reuse existing node
-        }
-
         Node *newNode = pool.allocate(op, lhs, rhs, value);
         nodes.push_back(newNode);
-        expression_cache[key] = newNode; // Store node reference
         return newNode;
     }
 
@@ -182,21 +164,24 @@ struct Variable
     double adjoint() const { return node->adjoint; }
 };
 
+// **Fix: Properly Handle Scalar Multiplication (Ensure 5.0*x[0] is Tracked)**
 Variable operator*(double lhs, const Variable &rhs)
 {
-    return Variable(rhs.tape->addNode(OpType::MUL, rhs.node, nullptr, lhs * rhs.node->value), rhs.tape);
+    Variable scalar_var(lhs, rhs.tape);
+    return Variable(rhs.tape->addNode(OpType::MUL, scalar_var.node, rhs.node, lhs * rhs.node->value), rhs.tape);
 }
 
 Variable operator+(double lhs, const Variable &rhs)
 {
-    return Variable(rhs.tape->addNode(OpType::ADD, rhs.node, nullptr, lhs + rhs.node->value), rhs.tape);
+    Variable scalar_var(lhs, rhs.tape);
+    return Variable(rhs.tape->addNode(OpType::ADD, scalar_var.node, rhs.node, lhs + rhs.node->value), rhs.tape);
 }
 
-// **Function f(x) with Memory Pool Optimization**
+// **Function f(x) with Fix for Scalar Multiplication**
 template <class T>
 T f(T x[5])
 {
-    T y1 = x[2] * (5.0 * x[0] + x[1]);
+    T y1 = x[2] * (5.0 * x[0] + x[1]); // Fix ensures `5.0*x[0]` is properly tracked
     T y2 = y1.log();
     T y = (y1 + x[3] * y2) * (y1 + y2);
     return y;
